@@ -9,6 +9,7 @@
 #include <string.h>
 
 using namespace std::chrono;
+using namespace std;
 
 static const float VIEW_HEIGHT = 1080.0f;
 static const float VIEW_WIDTH = 1920.0f;
@@ -34,75 +35,132 @@ int main()
 {
 
     // -------------------------------------- For Socket --------------------------------------
-    int iResult = 0;
-    WSADATA wsaData;
+	int title = 0;
+	int iResult0 = 0;
+	int iResult1 = 0;
+	int iResult2 = 0;
+	WSADATA wsaData;
 
-    SOCKET RecvSocket;
-    struct sockaddr_in RecvAddr;
+	SOCKET RecvSocket0;
+	struct sockaddr_in RecvAddr0;
 
-    unsigned short DATA_PORT = 1243;
-    unsigned short TITLE_PORT = 1245;
+	unsigned short DATA_PORT = 1243;
+	unsigned short TITLE_PORT = 1245;
 
-    char RecvBuf[100];
-    int BufLen = 100;
+	char RecvBuf[38];
+	int BufLen = 38;
 
-    struct sockaddr_in SenderAddr;
-    int SenderAddrSize = sizeof(SenderAddr);
 
-    // ------------------------------------------------------
-    // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (iResult != NO_ERROR)
-    {
-        wprintf(L"WSAStartup failed with error %d\n", iResult);
-        return 1;
-    }
-    puts("Initialized Winsock...\n");
-    // ------------------------------------------------------
-    // Create a reciever socket to receive datagrams
-    RecvSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (RecvSocket == INVALID_SOCKET)
-    {
-        wprintf(L"socket failed with error %d\n", WSAGetLastError());
-        return 1;
-    }
-    puts("Receiver Socket Created...\n");
-    // ------------------------------------------------------
-    // Bind the socket to any address and the specified port
-    RecvAddr.sin_family = AF_INET;
-    RecvAddr.sin_port = htons(TITLE_PORT);
-    RecvAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	char RecvDataBuf0[38];
+	int RecvBufLen0 = 38;
+	char RecvDataBuf1[38];
+	int RecvBufLen1 = 38;
+	char RecvDataBuf2[38];
+	int RecvBufLen2 = 38;
 
-    iResult = bind(RecvSocket, (SOCKADDR*)&RecvAddr, sizeof(RecvAddr));
-    if (iResult != 0)
-    {
-        wprintf(L"bind failed with error %d\n", WSAGetLastError());
-    }
-    puts("Bind Successful...\n");
-    // ------------------------------------------------------
-    // call recvfrom function to receive datagrams on bound socket
-    wprintf(L"Receiving datagrams...\n");
-    iResult = recvfrom(RecvSocket, RecvBuf, BufLen, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-    if (iResult == SOCKET_ERROR)
-    {
-        wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
-        return 1;
-    }
-    printf("recvfrom successful message: %s\n", RecvBuf);
-    // ------------------------------------------------------
-    // close the socket when finished receiving datagrams
-    wprintf(L"Finished receiving. Closing socket.\n");
-    iResult = closesocket(RecvSocket);
-    if (iResult == SOCKET_ERROR)
-    {
-        wprintf(L"closesocket failed with error %d\n", WSAGetLastError());
-        return 1;
-    }
+	struct sockaddr_in SenderAddr;
+	int SenderAddrSize = sizeof(SenderAddr);
 
-    // ------------------------------------------------------
-    // Clean up and exit
-    wprintf(L"Exiting.\n");
-    WSACleanup();
+	// ------------------------------------------------------
+	// Initialize Winsock
+	title = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	iResult0 = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	iResult1 = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	iResult2 = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (iResult0 != NO_ERROR)
+	{
+		wprintf(L"WSAStartup failed with error %d\n", iResult0);
+		return 1;
+	}
+	puts("Initialized Winsock...\n");
+	// ------------------------------------------------------
+	// Create a reciever socket to receive datagrams
+	RecvSocket0 = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (RecvSocket0 == INVALID_SOCKET)
+	{
+		wprintf(L"socket failed with error %d\n", WSAGetLastError());
+		return 1;
+	}
+	puts("Receiver Socket Created...\n");
+	// ------------------------------------------------------
+	// Bind the socket to any address and the specified port
+	RecvAddr0.sin_family = AF_INET;
+	RecvAddr0.sin_port = htons(TITLE_PORT);
+	RecvAddr0.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	title = bind(RecvSocket0, (SOCKADDR*)&RecvAddr0, sizeof(RecvAddr0));
+	iResult0 = bind(RecvSocket0, (SOCKADDR*)&RecvAddr0, sizeof(RecvAddr0));
+	iResult1 = bind(RecvSocket0, (SOCKADDR*)&RecvAddr0, sizeof(RecvAddr0));
+	iResult2 = bind(RecvSocket0, (SOCKADDR*)&RecvAddr0, sizeof(RecvAddr0));
+
+	if (iResult0 != 0 && iResult1 != 0 && iResult2 != 0 && title != 0)
+	{
+		wprintf(L"bind failed with error %d\n", WSAGetLastError());
+	}
+	puts("Bind Successful...\n");
+
+	// get the title
+	memset(RecvBuf, 0, BufLen);
+	title = recvfrom(RecvSocket0, RecvBuf, BufLen, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
+	auto expTitle = RecvBuf;
+	if (title == SOCKET_ERROR)
+	{
+		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
+		return 1;
+	}
+	printf("Title:%s\n", RecvBuf);
+
+	//while (1)
+	//{
+	//	// ------------------------------------------------------
+	//	// call recvfrom function to receive datagrams on bound socket
+	//	//wprintf(L"Receiving datagrams...\n");
+	//	// recieving piTime
+	//	memset(RecvDataBuf0, 0, RecvBufLen0);
+	//	iResult0 = recvfrom(RecvSocket0, RecvDataBuf0, RecvBufLen0, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
+	//	auto piTime = RecvDataBuf0;
+	//	if (iResult0 == SOCKET_ERROR)
+	//	{
+	//		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
+	//		return 1;
+	//	}
+
+	//	// recieving emgGAS
+	//	memset(RecvDataBuf1, 0, RecvBufLen1);
+	//	iResult1 = recvfrom(RecvSocket0, RecvDataBuf1, RecvBufLen1, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
+	//	auto emgGAS = RecvDataBuf1;
+	//	if (iResult1 == SOCKET_ERROR)
+	//	{
+	//		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
+	//		return 1;
+	//	}
+
+	//	// recieving emgTA
+	//	memset(RecvDataBuf2, 0, RecvBufLen2);
+	//	iResult2 = recvfrom(RecvSocket0, RecvDataBuf2, RecvBufLen2, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
+	//	auto emgTA = RecvDataBuf2;
+	//	if (iResult2 == SOCKET_ERROR)
+	//	{
+	//		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
+	//		return 1;
+	//	}
+
+	//	printf("piTime: %s - emgGAS: %s - emgTA: %s\n", piTime, emgGAS, emgTA);
+	//}
+	//// ------------------------------------------------------
+	//// close the socket when finished receiving datagrams
+	//wprintf(L"Finished receiving. Closing socket.\n");
+	//iResult = closesocket(RecvSocket);
+	//if (iResult == SOCKET_ERROR)
+	//{
+	//	wprintf(L"closesocket failed with error %d\n", WSAGetLastError());
+	//	return 1;
+	//}
+
+	//// ------------------------------------------------------
+	//// Clean up and exit
+	//wprintf(L"Exiting.\n");
+	//WSACleanup();
     // -------------------------------------- End Socket --------------------------------------
 
     auto next = steady_clock::now();
@@ -144,6 +202,45 @@ int main()
 
     while (window.isOpen())
     {   
+		// This is where we need to read info from the socket.
+		// can have data loop in here. 
+		// ------------------------------------------------------ read from socket ------------------------------------------------------
+		// // ------------------------------------------------------
+		// call recvfrom function to receive datagrams on bound socket
+		//wprintf(L"Receiving datagrams...\n");
+		// recieving piTime
+		memset(RecvDataBuf0, 0, RecvBufLen0);
+		iResult0 = recvfrom(RecvSocket0, RecvDataBuf0, RecvBufLen0, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
+		auto piTime = RecvDataBuf0;
+		if (iResult0 == SOCKET_ERROR)
+		{
+			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
+			return 1;
+		}
+
+		// recieving emgGAS
+		memset(RecvDataBuf1, 0, RecvBufLen1);
+		iResult1 = recvfrom(RecvSocket0, RecvDataBuf1, RecvBufLen1, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
+		auto emgGAS = RecvDataBuf1;
+		if (iResult1 == SOCKET_ERROR)
+		{
+			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
+			return 1;
+		}
+
+		// recieving emgTA
+		memset(RecvDataBuf2, 0, RecvBufLen2);
+		iResult2 = recvfrom(RecvSocket0, RecvDataBuf2, RecvBufLen2, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
+		auto emgTA = RecvDataBuf2;
+		if (iResult2 == SOCKET_ERROR)
+		{
+			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
+			return 1;
+		}
+
+		printf("piTime: %s - emgGAS: %s - emgTA: %s\n", piTime, emgGAS, emgTA);
+		// ------------------------------------------------------ end read from socket  ------------------------------------------------------
+
         random_num = std::rand() % ((int)VIEW_HEIGHT - 200) + 1;
         sf::Event event;
         while (window.pollEvent(event))
