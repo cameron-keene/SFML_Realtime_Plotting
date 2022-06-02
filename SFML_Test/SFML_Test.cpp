@@ -14,7 +14,7 @@ using namespace std;
 static const float VIEW_HEIGHT = 1080.0f;
 static const float VIEW_WIDTH = 1920.0f;
 
-
+#define SAMPLE_TIMESAMPLE_TIME = 15ms
 
 // -------------------------------------- For Socket --------------------------------------
 #ifndef UNICODE
@@ -164,7 +164,7 @@ int main()
     // -------------------------------------- End Socket --------------------------------------
 
     auto next = steady_clock::now();
-    auto prev = next - 15ms;
+    auto prev = next - 5ms;
 
     int random_num;
     srand(time(NULL));
@@ -232,13 +232,15 @@ int main()
 		memset(RecvDataBuf2, 0, RecvBufLen2);
 		iResult2 = recvfrom(RecvSocket0, RecvDataBuf2, RecvBufLen2, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
 		auto emgTA = RecvDataBuf2;
+		double tempEmgTA1 = strtod(emgTA, NULL);
+		float tempEmgTA2 = atof(emgTA);
 		if (iResult2 == SOCKET_ERROR)
 		{
 			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
 			return 1;
 		}
 
-		printf("piTime: %s - emgGAS: %s - emgTA: %s\n", piTime, emgGAS, emgTA);
+		printf("piTime: %s - emgGAS: %s - emgTA: %.15g\n", piTime, emgGAS, tempEmgTA2);
 		// ------------------------------------------------------ end read from socket  ------------------------------------------------------
 
         random_num = std::rand() % ((int)VIEW_HEIGHT - 200) + 1;
@@ -286,7 +288,7 @@ int main()
         prev = now;
 
         // delay until time to iterate again
-        next += 15ms;
+        next += 5ms;
         std::this_thread::sleep_until(next);
 
     }
