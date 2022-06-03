@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "SelbaWard/Line.hpp"
+#include "SelbaWard/Spline.hpp"
 
 #include <string.h>
 
@@ -14,8 +15,6 @@ using namespace std;
 
 static const float VIEW_HEIGHT = 1080.0f;
 static const float VIEW_WIDTH = 1920.0f;
-
-#define SAMPLE_TIMESAMPLE_TIME = 15ms
 
 // -------------------------------------- For Socket --------------------------------------
 #ifndef UNICODE
@@ -111,8 +110,10 @@ int main()
 	}
 	printf("Title:%s\n", RecvBuf);
 
+	int scale = 10;
+
     auto next = steady_clock::now();
-    auto prev = next - 5ms;
+    auto prev = next - std::chrono::milliseconds(scale);
 
     int random_num;
     srand(time(NULL));
@@ -162,7 +163,13 @@ int main()
 	// Top Right
 	quad_y[3].position = sf::Vector2f(110.f, 100.f);
 	quad_y[3].color = sf::Color::White;
-
+	
+	// Testing Spline
+	sw::Spline spline{};
+	spline.setThickness(10);
+	spline.setColor(sf::Color::Red);
+	// update always last after all modifications
+	spline.update();
 
     // data stream
     std::vector<sf::Vertex> m_verticies;
@@ -172,7 +179,6 @@ int main()
     // (0,0) = (100.f, height - 100.f)
 
     uint16_t offset = 2;
-    int scale = 10;
 
     view.setCenter(VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
 
@@ -224,6 +230,8 @@ int main()
 		// data is on scale 0.000199 to 0.0258
 		double emgGasScaled = emgGAS * 34000;
 
+		int vertex_position = 0; 
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -264,18 +272,46 @@ int main()
 			// Top Right
 			quad_y[3].position = sf::Vector2f(-VIEW_WIDTH + 230.f + offset, 100.f);
 
+
+			
+
+			sf::Vector2f v1(215.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
+			sw::Spline spline2{ 1, v1 };
+
+			spline2.setThickness(10);
+			// update always last after all modifications
+			spline.addSplineToBack(spline2);
+			spline.update();
+
+			// rolling window to remove verticies of old.
+			spline.removeVertices(vertex_position, 1);
+			spline.update();
+			vertex_position += scale;
+
         }else{
             m_verticies.push_back(sf::Vertex(sf::Vector2f(100.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled), sf::Color::Red));
+			
+			sf::Vector2f v1(230.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
+			sw::Spline spline2{1, v1};
+
+			spline2.setThickness(10);
+			// update always last after all modifications
+			spline.addSplineToBack(spline2);
+			spline.update();
+
             offset += scale;
         }
 
         window.clear();
         window.draw(quad_x);
-        window.draw(quad_y);
+		window.draw(quad_y);
+		window.draw(spline);
         window.setView(view);
+
+		printf("Vertex Count: %d", spline.getVertexCount());
         
         // old method of drawing live data
-        window.draw(m_verticies.data(), m_verticies.size(), sf::TriangleStrip);
+        //window.draw(m_verticies.data(), m_verticies.size(), sf::TriangleStrip);
 
         window.display();
         
@@ -286,7 +322,7 @@ int main()
         prev = now;
 
         // delay until time to iterate again
-        next += 5ms;
+        next += std::chrono::milliseconds(scale);
         std::this_thread::sleep_until(next);
 
     }
