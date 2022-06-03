@@ -146,8 +146,51 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="sfLine.cpp" />
+    <ClCompile Include="SelbaWard\BitmapFont.cpp" />
+    <ClCompile Include="SelbaWard\BitmapText.cpp" />
+    <ClCompile Include="SelbaWard\ConsoleScreen.cpp" />
+    <ClCompile Include="SelbaWard\ConsoleScreenOld.cpp" />
+    <ClCompile Include="SelbaWard\Crosshair.cpp" />
+    <ClCompile Include="SelbaWard\ElasticSprite.cpp" />
+    <ClCompile Include="SelbaWard\GallerySprite.cpp" />
+    <ClCompile Include="SelbaWard\Line.cpp" />
+    <ClCompile Include="SelbaWard\NinePatch.cpp" />
+    <ClCompile Include="SelbaWard\PieChart.cpp" />
+    <ClCompile Include="SelbaWard\PixelDisplay.cpp" />
+    <ClCompile Include="SelbaWard\ProgressBar.cpp" />
+    <ClCompile Include="SelbaWard\Ring.cpp" />
+    <ClCompile Include="SelbaWard\SpinningCard.cpp" />
+    <ClCompile Include="SelbaWard\Spline.cpp" />
+    <ClCompile Include="SelbaWard\Sprite3d.cpp" />
+    <ClCompile Include="SelbaWard\Starfield.cpp" />
     <ClCompile Include="SFML_Test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SelbaWard.hpp" />
+    <ClInclude Include="SelbaWard\BitmapFont.hpp" />
+    <ClInclude Include="SelbaWard\BitmapText.hpp" />
+    <ClInclude Include="SelbaWard\Common.hpp" />
+    <ClInclude Include="SelbaWard\ConsoleScreen.hpp" />
+    <ClInclude Include="SelbaWard\ConsoleScreenOld.hpp" />
+    <ClInclude Include="SelbaWard\Crosshair.hpp" />
+    <ClInclude Include="SelbaWard\ElasticSprite.hpp" />
+    <ClInclude Include="SelbaWard\Exception.hpp" />
+    <ClInclude Include="SelbaWard\GallerySprite.hpp" />
+    <ClInclude Include="SelbaWard\Line.hpp" />
+    <ClInclude Include="SelbaWard\NinePatch.hpp" />
+    <ClInclude Include="SelbaWard\PaletteEnums.hpp" />
+    <ClInclude Include="SelbaWard\PieChart.hpp" />
+    <ClInclude Include="SelbaWard\PixelDisplay.hpp" />
+    <ClInclude Include="SelbaWard\ProgressBar.hpp" />
+    <ClInclude Include="SelbaWard\Ring.hpp" />
+    <ClInclude Include="SelbaWard\SpinningCard.hpp" />
+    <ClInclude Include="SelbaWard\Spline.hpp" />
+    <ClInclude Include="SelbaWard\Sprite3d.hpp" />
+    <ClInclude Include="SelbaWard\Starfield.hpp" />
+    <ClInclude Include="SelbaWard\TileMap.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SelbaWard\TileMap.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

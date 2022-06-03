@@ -5,6 +5,8 @@
 #include <thread>
 #include <SFML/Graphics.hpp>
 
+#include "SelbaWard/Line.hpp"
+
 #include <string.h>
 
 using namespace std::chrono;
