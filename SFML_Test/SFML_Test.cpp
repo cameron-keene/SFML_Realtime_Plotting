@@ -1,10 +1,9 @@
-#include <SFML/Graphics.hpp>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <iostream> /*cout, endl*/
-
 #include <chrono>
 #include <thread>
+#include <SFML/Graphics.hpp>
 
 #include <string.h>
 
@@ -110,59 +109,6 @@ int main()
 	}
 	printf("Title:%s\n", RecvBuf);
 
-	//while (1)
-	//{
-	//	// ------------------------------------------------------
-	//	// call recvfrom function to receive datagrams on bound socket
-	//	//wprintf(L"Receiving datagrams...\n");
-	//	// recieving piTime
-	//	memset(RecvDataBuf0, 0, RecvBufLen0);
-	//	iResult0 = recvfrom(RecvSocket0, RecvDataBuf0, RecvBufLen0, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-	//	auto piTime = RecvDataBuf0;
-	//	if (iResult0 == SOCKET_ERROR)
-	//	{
-	//		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
-	//		return 1;
-	//	}
-
-	//	// recieving emgGAS
-	//	memset(RecvDataBuf1, 0, RecvBufLen1);
-	//	iResult1 = recvfrom(RecvSocket0, RecvDataBuf1, RecvBufLen1, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-	//	auto emgGAS = RecvDataBuf1;
-	//	if (iResult1 == SOCKET_ERROR)
-	//	{
-	//		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
-	//		return 1;
-	//	}
-
-	//	// recieving emgTA
-	//	memset(RecvDataBuf2, 0, RecvBufLen2);
-	//	iResult2 = recvfrom(RecvSocket0, RecvDataBuf2, RecvBufLen2, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-	//	auto emgTA = RecvDataBuf2;
-	//	if (iResult2 == SOCKET_ERROR)
-	//	{
-	//		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
-	//		return 1;
-	//	}
-
-	//	printf("piTime: %s - emgGAS: %s - emgTA: %s\n", piTime, emgGAS, emgTA);
-	//}
-	//// ------------------------------------------------------
-	//// close the socket when finished receiving datagrams
-	//wprintf(L"Finished receiving. Closing socket.\n");
-	//iResult = closesocket(RecvSocket);
-	//if (iResult == SOCKET_ERROR)
-	//{
-	//	wprintf(L"closesocket failed with error %d\n", WSAGetLastError());
-	//	return 1;
-	//}
-
-	//// ------------------------------------------------------
-	//// Clean up and exit
-	//wprintf(L"Exiting.\n");
-	//WSACleanup();
-    // -------------------------------------- End Socket --------------------------------------
-
     auto next = steady_clock::now();
     auto prev = next - 5ms;
 
@@ -179,7 +125,7 @@ int main()
         sf::Vertex(sf::Vector2f(VIEW_WIDTH, 100.f), sf::Color::Black)
     };
 
-    // for x & y axis
+    // for x & y axis (Graph)
     sf::VertexArray x_axis(sf::Lines);
     x_axis.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f));
     x_axis.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f));
@@ -187,6 +133,23 @@ int main()
     sf::VertexArray y_axis(sf::Lines);
     y_axis.append(sf::Vector2f(100.f, 100.f));
     y_axis.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f));
+
+	// new method to draw chart.
+	// SFML lines cannot have a thickness
+	// need to draw rectangles instead
+	sf::VertexArray quad_x(sf::Quads, 4);
+	// Top Left
+	quad_x[0].position = sf::Vector2f(100.f, VIEW_HEIGHT - 100.f);
+	quad_x[0].color = sf::Color::White;
+	// Bottom Left
+	quad_x[1].position = sf::Vector2f(100.f, VIEW_HEIGHT - 100.f + 10.f);
+	quad_x[1].color = sf::Color::White;
+	// Bottom Right
+	quad_x[2].position = sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f + 10.f);
+	quad_x[2].color = sf::Color::White;
+	// Top Right
+	quad_x[3].position = sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f);
+	quad_x[3].color = sf::Color::White;
 
     // data stream
     std::vector<sf::Vertex> m_verticies;
@@ -211,7 +174,7 @@ int main()
 		// recieving piTime
 		memset(RecvDataBuf0, 0, RecvBufLen0);
 		iResult0 = recvfrom(RecvSocket0, RecvDataBuf0, RecvBufLen0, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-		auto piTime = RecvDataBuf0;
+		double piTime = strtod(RecvDataBuf0, NULL);
 		if (iResult0 == SOCKET_ERROR)
 		{
 			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
@@ -221,7 +184,7 @@ int main()
 		// recieving emgGAS
 		memset(RecvDataBuf1, 0, RecvBufLen1);
 		iResult1 = recvfrom(RecvSocket0, RecvDataBuf1, RecvBufLen1, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-		auto emgGAS = RecvDataBuf1;
+		double emgGAS = strtod(RecvDataBuf1, NULL);
 		if (iResult1 == SOCKET_ERROR)
 		{
 			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
@@ -231,19 +194,23 @@ int main()
 		// recieving emgTA
 		memset(RecvDataBuf2, 0, RecvBufLen2);
 		iResult2 = recvfrom(RecvSocket0, RecvDataBuf2, RecvBufLen2, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-		auto emgTA = RecvDataBuf2;
-		double tempEmgTA1 = strtod(emgTA, NULL);
-		float tempEmgTA2 = atof(emgTA);
+		double emgTA = strtod(RecvDataBuf2, NULL);
 		if (iResult2 == SOCKET_ERROR)
 		{
 			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
 			return 1;
 		}
 
-		printf("piTime: %s - emgGAS: %s - emgTA: %.15g\n", piTime, emgGAS, tempEmgTA2);
+		printf("piTime: %.15g - emgGAS: %.15g - emgTA: %.15g\n", piTime, emgGAS, emgTA);
 		// ------------------------------------------------------ end read from socket  ------------------------------------------------------
 
+
+		// old - random_num instead of using actual data
         random_num = std::rand() % ((int)VIEW_HEIGHT - 200) + 1;
+		// new - taking old emg data and plotting it
+		// data is on scale 0.000199 to 0.0258
+		double emgGasScaled = emgGAS * 34000;
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -255,25 +222,34 @@ int main()
             // start scrolling
             // erase first item in vector
             m_verticies.erase(m_verticies.begin());
-            // push_back new vertex
-            m_verticies.push_back(sf::Vertex(sf::Vector2f(230.f + offset, VIEW_HEIGHT - 100.f - random_num), sf::Color::Red));
+            // push_back new vertex/point
+            m_verticies.push_back(sf::Vertex(sf::Vector2f(230.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled), sf::Color::Red));
             offset += scale;
             view.setCenter(-(VIEW_HEIGHT/2) -300 + offset, VIEW_HEIGHT/2);
 
-            // update the x_axis
+            // update the chart position
             x_axis[0].position = sf::Vector2f(sf::Vector2f(100.f + offset, VIEW_HEIGHT - 100.f));
             x_axis[1].position = sf::Vector2f(sf::Vector2f(-VIEW_WIDTH + 220.f + offset, VIEW_HEIGHT - 100.f));
             y_axis[0].position = sf::Vector2f(sf::Vector2f(-VIEW_WIDTH + 220.f + offset , 100.f));
             y_axis[1].position = sf::Vector2f(sf::Vector2f(-VIEW_WIDTH + 220.f + offset , VIEW_HEIGHT - 100.f));
 
+			// Top Right
+			quad_x[0].position = sf::Vector2f(offset, VIEW_HEIGHT - 100.f);
+			// Bottom Right
+			quad_x[1].position = sf::Vector2f(offset, VIEW_HEIGHT - 100.f + 10.f);
+			// Bottom Left
+			quad_x[2].position = sf::Vector2f(-VIEW_WIDTH + 220.f + offset, VIEW_HEIGHT - 100.f + 10.f);
+			// Top Left
+			quad_x[3].position = sf::Vector2f(- VIEW_WIDTH + 220.f + offset, VIEW_HEIGHT - 100.f);
+
         }else{
-            m_verticies.push_back(sf::Vertex(sf::Vector2f(100.f + offset, VIEW_HEIGHT - 100.f - random_num), sf::Color::Red));
+            m_verticies.push_back(sf::Vertex(sf::Vector2f(100.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled), sf::Color::Red));
             offset += scale;
         }
 
         window.clear();
-        window.draw(x_axis);
-        window.draw(y_axis);
+        window.draw(quad_x);
+        //window.draw(y_axis);
         window.setView(view);
         
         // old method of drawing live data
