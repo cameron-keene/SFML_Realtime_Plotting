@@ -120,11 +120,6 @@ int main()
     // create default view
     sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT));
 
-    sf::Vertex border[] = {
-        sf::Vertex(sf::Vector2f(0.f, 100.f), sf::Color::Black),
-        sf::Vertex(sf::Vector2f(VIEW_WIDTH, 100.f), sf::Color::Black)
-    };
-
     // for x & y axis (Graph)
     sf::VertexArray x_axis(sf::Lines);
     x_axis.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f));
@@ -150,6 +145,22 @@ int main()
 	// Top Right
 	quad_x[3].position = sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f);
 	quad_x[3].color = sf::Color::White;
+
+	// y-axis:
+	sf::VertexArray quad_y(sf::Quads, 4);
+	// Top Left
+	quad_y[0].position = sf::Vector2f(100.f, 100.f);
+	quad_y[0].color = sf::Color::White;
+	// Bottom Left 
+	quad_y[1].position = sf::Vector2f(100.f, VIEW_HEIGHT - 100.f);
+	quad_y[1].color = sf::Color::White;
+	// Bottom Right 
+	quad_y[2].position = sf::Vector2f(110.f, VIEW_HEIGHT - 100.f);
+	quad_y[2].color = sf::Color::White;
+	// Top Right
+	quad_y[3].position = sf::Vector2f(110.f, 100.f);
+	quad_y[3].color = sf::Color::White;
+
 
     // data stream
     std::vector<sf::Vertex> m_verticies;
@@ -228,10 +239,10 @@ int main()
             view.setCenter(-(VIEW_HEIGHT/2) -300 + offset, VIEW_HEIGHT/2);
 
             // update the chart position
-            x_axis[0].position = sf::Vector2f(sf::Vector2f(100.f + offset, VIEW_HEIGHT - 100.f));
+            /*x_axis[0].position = sf::Vector2f(sf::Vector2f(100.f + offset, VIEW_HEIGHT - 100.f));
             x_axis[1].position = sf::Vector2f(sf::Vector2f(-VIEW_WIDTH + 220.f + offset, VIEW_HEIGHT - 100.f));
             y_axis[0].position = sf::Vector2f(sf::Vector2f(-VIEW_WIDTH + 220.f + offset , 100.f));
-            y_axis[1].position = sf::Vector2f(sf::Vector2f(-VIEW_WIDTH + 220.f + offset , VIEW_HEIGHT - 100.f));
+            y_axis[1].position = sf::Vector2f(sf::Vector2f(-VIEW_WIDTH + 220.f + offset , VIEW_HEIGHT - 100.f));*/
 
 			// Top Right
 			quad_x[0].position = sf::Vector2f(offset, VIEW_HEIGHT - 100.f);
@@ -242,6 +253,15 @@ int main()
 			// Top Left
 			quad_x[3].position = sf::Vector2f(- VIEW_WIDTH + 220.f + offset, VIEW_HEIGHT - 100.f);
 
+			// Top Left
+			quad_y[0].position = sf::Vector2f(-VIEW_WIDTH + 220.f + offset, 100.f);
+			// Bottom Left 
+			quad_y[1].position = sf::Vector2f(-VIEW_WIDTH + 220.f + offset, VIEW_HEIGHT - 100.f);
+			// Bottom Right 
+			quad_y[2].position = sf::Vector2f(-VIEW_WIDTH + 230.f + offset, VIEW_HEIGHT - 100.f);
+			// Top Right
+			quad_y[3].position = sf::Vector2f(-VIEW_WIDTH + 230.f + offset, 100.f);
+
         }else{
             m_verticies.push_back(sf::Vertex(sf::Vector2f(100.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled), sf::Color::Red));
             offset += scale;
@@ -249,11 +269,11 @@ int main()
 
         window.clear();
         window.draw(quad_x);
-        //window.draw(y_axis);
+        window.draw(quad_y);
         window.setView(view);
         
         // old method of drawing live data
-        window.draw(m_verticies.data(), m_verticies.size(), sf::LineStrip);
+        window.draw(m_verticies.data(), m_verticies.size(), sf::TriangleStrip);
 
         window.display();
         
