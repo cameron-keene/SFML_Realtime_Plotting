@@ -8,6 +8,8 @@
 #include "SelbaWard/Line.hpp"
 #include "SelbaWard/Spline.hpp"
 
+#include "SocketManager.cpp"
+
 #include <string.h>
 
 using namespace std::chrono;
@@ -16,99 +18,13 @@ using namespace std;
 static const float VIEW_HEIGHT = 1080.0f;
 static const float VIEW_WIDTH = 1920.0f;
 
-// -------------------------------------- For Socket --------------------------------------
-#ifndef UNICODE
-#define UNICODE
-#endif
-
-#define WIN32_LEAN_AND_MEAN
-
-#include <winsock2.h>
-#include <Ws2tcpip.h>
-#include <stdio.h>
-
-// Link with ws2_32.lib
-#pragma comment(lib, "Ws2_32.lib")
 
 // -------------------------------------- For Socket --------------------------------------
 int main()
 {
-
-    // -------------------------------------- For Socket --------------------------------------
-	int title = 0;
-	int iResult0 = 0;
-	int iResult1 = 0;
-	int iResult2 = 0;
-	WSADATA wsaData;
-
-	SOCKET RecvSocket0;
-	struct sockaddr_in RecvAddr0;
-
-	unsigned short DATA_PORT = 1243;
-	unsigned short TITLE_PORT = 1245;
-
-	char RecvBuf[38];
-	int BufLen = 38;
-
-
-	char RecvDataBuf0[38];
-	int RecvBufLen0 = 38;
-	char RecvDataBuf1[38];
-	int RecvBufLen1 = 38;
-	char RecvDataBuf2[38];
-	int RecvBufLen2 = 38;
-
-	struct sockaddr_in SenderAddr;
-	int SenderAddrSize = sizeof(SenderAddr);
-
-	// ------------------------------------------------------
-	// Initialize Winsock
-	title = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	iResult0 = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	iResult1 = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	iResult2 = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult0 != NO_ERROR)
-	{
-		wprintf(L"WSAStartup failed with error %d\n", iResult0);
-		return 1;
-	}
-	puts("Initialized Winsock...\n");
-	// ------------------------------------------------------
-	// Create a reciever socket to receive datagrams
-	RecvSocket0 = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (RecvSocket0 == INVALID_SOCKET)
-	{
-		wprintf(L"socket failed with error %d\n", WSAGetLastError());
-		return 1;
-	}
-	puts("Receiver Socket Created...\n");
-	// ------------------------------------------------------
-	// Bind the socket to any address and the specified port
-	RecvAddr0.sin_family = AF_INET;
-	RecvAddr0.sin_port = htons(TITLE_PORT);
-	RecvAddr0.sin_addr.s_addr = htonl(INADDR_ANY);
-
-	title = bind(RecvSocket0, (SOCKADDR*)&RecvAddr0, sizeof(RecvAddr0));
-	iResult0 = bind(RecvSocket0, (SOCKADDR*)&RecvAddr0, sizeof(RecvAddr0));
-	iResult1 = bind(RecvSocket0, (SOCKADDR*)&RecvAddr0, sizeof(RecvAddr0));
-	iResult2 = bind(RecvSocket0, (SOCKADDR*)&RecvAddr0, sizeof(RecvAddr0));
-
-	if (iResult0 != 0 && iResult1 != 0 && iResult2 != 0 && title != 0)
-	{
-		wprintf(L"bind failed with error %d\n", WSAGetLastError());
-	}
-	puts("Bind Successful...\n");
-
-	// get the title
-	memset(RecvBuf, 0, BufLen);
-	title = recvfrom(RecvSocket0, RecvBuf, BufLen, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-	auto expTitle = RecvBuf;
-	if (title == SOCKET_ERROR)
-	{
-		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
-		return 1;
-	}
-	printf("Title:%s\n", RecvBuf);
+	SocketManager TestSocket;
+	string title = TestSocket.GetTitle();
+	printf("Title:%s\n", title);
 
 	int scale = 10;
 
@@ -191,34 +107,18 @@ int main()
 		// call recvfrom function to receive datagrams on bound socket
 		//wprintf(L"Receiving datagrams...\n");
 		// recieving piTime
-		memset(RecvDataBuf0, 0, RecvBufLen0);
-		iResult0 = recvfrom(RecvSocket0, RecvDataBuf0, RecvBufLen0, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-		double piTime = strtod(RecvDataBuf0, NULL);
-		if (iResult0 == SOCKET_ERROR)
-		{
-			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
-			return 1;
-		}
+		//double piTime = TestSocket.Read(TestSocket.RecvDataBuf0, TestSocket.RecvBufLen0, TestSocket.iResult0);
 
-		// recieving emgGAS
-		memset(RecvDataBuf1, 0, RecvBufLen1);
-		iResult1 = recvfrom(RecvSocket0, RecvDataBuf1, RecvBufLen1, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-		double emgGAS = strtod(RecvDataBuf1, NULL);
-		if (iResult1 == SOCKET_ERROR)
-		{
-			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
-			return 1;
-		}
+		//// recieving emgGAS
+		//double emgGAS = TestSocket.Read(TestSocket.RecvDataBuf1, TestSocket.RecvBufLen1, TestSocket.iResult1);
 
-		// recieving emgTA
-		memset(RecvDataBuf2, 0, RecvBufLen2);
-		iResult2 = recvfrom(RecvSocket0, RecvDataBuf2, RecvBufLen2, 0, (SOCKADDR*)&SenderAddr, &SenderAddrSize);
-		double emgTA = strtod(RecvDataBuf2, NULL);
-		if (iResult2 == SOCKET_ERROR)
-		{
-			wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
-			return 1;
-		}
+		//// recieving emgTA
+		//double emgTA = TestSocket.Read(TestSocket.RecvDataBuf2, TestSocket.RecvBufLen2, TestSocket.iResult2);
+
+		vector<double> read_result = TestSocket.Read();
+		double piTime = read_result[0];
+		double emgGAS = read_result[1];
+		double emgTA = read_result[2];
 
 		printf("piTime: %.15g - emgGAS: %.15g - emgTA: %.15g\n", piTime, emgGAS, emgTA);
 		// ------------------------------------------------------ end read from socket  ------------------------------------------------------
@@ -228,7 +128,7 @@ int main()
         random_num = std::rand() % ((int)VIEW_HEIGHT - 200) + 1;
 		// new - taking old emg data and plotting it
 		// data is on scale 0.000199 to 0.0258
-		double emgGasScaled = emgGAS * 34000;
+		double emgGasScaled = emgGAS * 2500;
 
 		int vertex_position = 0; 
 
