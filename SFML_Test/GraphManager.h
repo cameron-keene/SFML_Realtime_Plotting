@@ -19,6 +19,7 @@ class GraphManager
 public:
 	SocketManager TestSocket;
 	string TestTitle;
+	int TrialDuration;
 	int scale;
 	steady_clock::time_point next;
 	steady_clock::time_point prev;

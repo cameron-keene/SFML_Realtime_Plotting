@@ -94,3 +94,17 @@ vector<double> SocketManager::Read() {
 	result.push_back(emgTA);
 	return result;
 }
+
+int SocketManager::GetDuration() 
+{
+	memset(this->DurBuf, 0, this->DurBufLen);
+	this->trial_duration = recvfrom(this->RecvSocket0, this->DurBuf, this->DurBufLen, 0, (SOCKADDR*)&this->SenderAddr, &this->SenderAddrSize);
+	string Dur = this->DurBuf;
+	if (this->title == SOCKET_ERROR)
+	{
+		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
+		//return 1;
+	}
+	cout << "Value: " << Dur << endl;
+	return stoi(Dur);
+}

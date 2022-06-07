@@ -3,6 +3,7 @@
 GraphManager::GraphManager(){ 
 	// initilization of Graph
 	this->TestTitle = TestSocket.GetTitle();
+	this->TrialDuration = TestSocket.GetDuration();
 
 	this->scale = 10;
 	this->next = chrono::steady_clock::now();
@@ -73,6 +74,7 @@ void GraphManager::OpenWindow()
 		double emgGAS = read_result[1];
 		double emgTA = read_result[2];
 		printf("piTime: %.15g - emgGAS: %.15g - emgTA: %.15g\n", piTime, emgGAS, emgTA);
+		cout << "TrialDuration: " << this->TrialDuration << endl;
 		// new - taking old emg data and plotting it
 		// data is on scale 0.000199 to 0.0258
 		double emgGasScaled = emgGAS * 2500;
@@ -158,5 +160,9 @@ void GraphManager::OpenWindow()
 		// delay until time to iterate again
 		this->next += std::chrono::milliseconds(this->scale);
 		std::this_thread::sleep_until(this->next);
+		if (piTime+0.25 > this->TrialDuration)
+		{
+			this->window.close();
+		}
 	}
 }
