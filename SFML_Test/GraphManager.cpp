@@ -58,14 +58,53 @@ GraphManager::GraphManager(){
 	// update always last after all modifications
 	this->spline.update();
 
-	// data stream
-	this->m_verticies.push_back(sf::Vertex(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f), sf::Color::Red));
-
 	this->offset = 2;
 
 	this->view.setCenter(VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
 }
-void GraphManager::OpenWindow()
+
+void GraphManager::SlideGraph()
+{
+	// start scrolling
+	offset += scale;
+	this->view.setCenter(-(VIEW_HEIGHT / 2) - 300 + this->offset, VIEW_HEIGHT / 2);
+
+	// Top Right
+	this->quad_x[0].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f);
+	// Bottom Right
+	this->quad_x[1].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f + 10.f);
+	// Bottom Left
+	this->quad_x[2].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f + 10.f);
+	// Top Left
+	this->quad_x[3].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f);
+
+	// Top Left
+	this->quad_y[0].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, 100.f);
+	// Bottom Left 
+	this->quad_y[1].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f);
+	// Bottom Right 
+	this->quad_y[2].position = sf::Vector2f(-VIEW_WIDTH + 230.f + this->offset, VIEW_HEIGHT - 100.f);
+	// Top Right
+	this->quad_y[3].position = sf::Vector2f(-VIEW_WIDTH + 230.f + this->offset, 100.f);
+
+
+}
+void GraphManager::UpdateSplineMVC(int emgGasScaled, int vertex_position)
+{
+	sf::Vector2f v1(215.f + this->offset, VIEW_HEIGHT - 100.f - emgGasScaled);
+	sw::Spline spline2{ 1, v1 };
+
+	spline2.setThickness(10);
+	// update always last after all modifications
+	this->spline.addSplineToBack(spline2);
+	this->spline.update();
+
+	// rolling window to remove verticies of old.
+	this->spline.removeVertices(vertex_position, 1);
+	this->spline.update();
+}
+
+void GraphManager::OpenWindow(string _type)
 {
 	while (this->window.isOpen()) 
 	{
@@ -87,69 +126,42 @@ void GraphManager::OpenWindow()
 			if (event.type == sf::Event::Closed)
 				this->window.close();
 		}
-		if (this->m_verticies.size() == VIEW_WIDTH / this->scale) {
-			// start scrolling
-			// erase first item in vector
-			this->m_verticies.erase(this->m_verticies.begin());
-			// push_back new vertex/point
-			this->m_verticies.push_back(sf::Vertex(sf::Vector2f(230.f + this->offset, VIEW_HEIGHT - 100.f - emgGasScaled), sf::Color::Red));
-			offset += scale;
-			this->view.setCenter(-(VIEW_HEIGHT / 2) - 300 + this->offset, VIEW_HEIGHT / 2);
+		if (_type == "MVC") 
+		{
+			if ((this->spline.getVertexCount() + 1) == VIEW_WIDTH / this->scale) {
+				SlideGraph();
+				UpdateSplineMVC(emgGasScaled, vertex_position);
+				vertex_position += this->scale;
+			}
+			else {
+				sf::Vector2f v1(230.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
+				sw::Spline spline2{ 1, v1 };
 
-			// Top Right
-			this->quad_x[0].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f);
-			// Bottom Right
-			this->quad_x[1].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f + 10.f);
-			// Bottom Left
-			this->quad_x[2].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f + 10.f);
-			// Top Left
-			this->quad_x[3].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f);
+				spline2.setThickness(10);
+				// update always last after all modifications
+				this->spline.addSplineToBack(spline2);
+				this->spline.update();
 
-			// Top Left
-			this->quad_y[0].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, 100.f);
-			// Bottom Left 
-			this->quad_y[1].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f);
-			// Bottom Right 
-			this->quad_y[2].position = sf::Vector2f(-VIEW_WIDTH + 230.f + this->offset, VIEW_HEIGHT - 100.f);
-			// Top Right
-			this->quad_y[3].position = sf::Vector2f(-VIEW_WIDTH + 230.f + this->offset, 100.f);
+				this->offset += this->scale;
+			}
 
-			sf::Vector2f v1(215.f + this->offset, VIEW_HEIGHT - 100.f - emgGasScaled);
-			sw::Spline spline2{ 1, v1 };
 
-			spline2.setThickness(10);
-			// update always last after all modifications
-			this->spline.addSplineToBack(spline2);
-			this->spline.update();
+			this->window.clear();
+			this->window.draw(quad_x);
+			this->window.draw(quad_y);
+			this->window.draw(spline);
+			this->window.setView(view);
 
-			// rolling window to remove verticies of old.
-			this->spline.removeVertices(vertex_position, 1);
-			this->spline.update();
-			vertex_position += this->scale;
+			//printf("Vertex Count: %d", spline.getVertexCount());
 
+			this->window.display();
 		}
-		else {
-			this->m_verticies.push_back(sf::Vertex(sf::Vector2f(100.f + this->offset, VIEW_HEIGHT - 100.f - emgGasScaled), sf::Color::Red));
-
-			sf::Vector2f v1(230.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
-			sw::Spline spline2{ 1, v1 };
-
-			spline2.setThickness(10);
-			// update always last after all modifications
-			this->spline.addSplineToBack(spline2);
-			this->spline.update();
-
-			this->offset += this->scale;
+		else if (_type == "Dynamic")
+		{
+			//Sine Wave y(t) = A * sin(2 * PI * f * t + shift)
+			
 		}
-		this->window.clear();
-		this->window.draw(quad_x);
-		this->window.draw(quad_y);
-		this->window.draw(spline);
-		this->window.setView(view);
-
-		//printf("Vertex Count: %d", spline.getVertexCount());
-
-		this->window.display();
+		
 
 
 		// do stuff

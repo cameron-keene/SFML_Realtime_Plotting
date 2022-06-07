@@ -12,6 +12,6 @@ using namespace std;
 int main()
 {
 	GraphManager TestGraph;
-	TestGraph.OpenWindow();
+	TestGraph.OpenWindow("MVC");
     return 0;
 }

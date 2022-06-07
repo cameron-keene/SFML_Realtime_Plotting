@@ -34,13 +34,13 @@ public:
 	
 	sw::Spline spline{};
 
-	vector<sf::Vertex> m_verticies;
-
 	uint16_t offset;
 
 	vector<double> read_result;
 
 	// functions
 	GraphManager();
-	void OpenWindow();
+	void SlideGraph();
+	void UpdateSplineMVC(int emgGasScaled, int vertex_position);
+	void OpenWindow(string _type);
 };
