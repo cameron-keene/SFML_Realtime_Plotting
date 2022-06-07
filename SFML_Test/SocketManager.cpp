@@ -57,19 +57,13 @@ string SocketManager::GetTitle() {
 		wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
 		//return 1;
 	}
-	return this->RecvBuf;
+	cout << "Title: " << expTitle << endl;
+	return expTitle;
 }
 vector<double> SocketManager::Read() {
-	//memset(_buffer, 0, _bufLen);
-	//iResultNum = recvfrom(this->RecvSocket0, _buffer, _bufLen, 0, (SOCKADDR*)&this->SenderAddr, &this->SenderAddrSize);
-	//double result = strtod(this->RecvDataBuf0, NULL);
-	//if (iResultNum == SOCKET_ERROR)
-	//{
-	//	wprintf(L"Recvfrom failed with error %d\n", WSAGetLastError());
-	//	//return 1;
-	//}
 	vector<double> result;
-
+	
+	// recieving PiTime
 	memset(this->RecvDataBuf0, 0, this->RecvBufLen0);
 	this->iResult0 = recvfrom(this->RecvSocket0, this->RecvDataBuf0, this->RecvBufLen0, 0, (SOCKADDR*)&this->SenderAddr, &this->SenderAddrSize);
 	double piTime = strtod(this->RecvDataBuf0, NULL);
