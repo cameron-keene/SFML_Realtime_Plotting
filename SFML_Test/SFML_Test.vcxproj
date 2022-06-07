@@ -188,9 +188,11 @@
     <ClInclude Include="SelbaWard\Sprite3d.hpp" />
     <ClInclude Include="SelbaWard\Starfield.hpp" />
     <ClInclude Include="SelbaWard\TileMap.hpp" />
+    <ClInclude Include="SocketManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SelbaWard\TileMap.inl" />
+    <None Include="SocketManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

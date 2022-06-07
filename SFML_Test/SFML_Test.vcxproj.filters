@@ -140,10 +140,14 @@
     <ClInclude Include="SelbaWard\TileMap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SocketManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SelbaWard\TileMap.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="SocketManager.cpp" />
   </ItemGroup>
 </Project>
