@@ -5,7 +5,9 @@
 #include "SelbaWard/Spline.hpp"
 #include <chrono>
 #include <thread>
+#include <math.h>
 
+#define PI 3.14159265
 //#include <string>
 
 static const float VIEW_HEIGHT = 1080.0f;
@@ -19,8 +21,8 @@ class GraphManager
 public:
 	SocketManager TestSocket;
 	string TestTitle;
-	int TrialDuration;
-	int scale;
+	int TrialDuration, scale;
+	double sineAmp, sineFreq;
 	steady_clock::time_point next;
 	steady_clock::time_point prev;
 
@@ -33,6 +35,7 @@ public:
 	sf::VertexArray quad_y;
 	
 	sw::Spline spline{};
+	sw::Spline sineSpline{};
 
 	uint16_t offset;
 
@@ -42,5 +45,6 @@ public:
 	GraphManager();
 	void SlideGraph();
 	void UpdateSplineMVC(int emgGasScaled, int vertex_position);
+	void UpdateSineSpine(int sineValue, int vertex_position);
 	void OpenWindow(string _type);
 };
