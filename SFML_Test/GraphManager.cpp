@@ -9,7 +9,7 @@ GraphManager::GraphManager(){
 	this->gasEmgMax = 0.01;
 	this->taEmgMax = 0.03;
 
-	this->graphScale = 2500;
+	this->graphScale = 25000;
 	this->scale = 10;
 	this->next = chrono::steady_clock::now();
 	this->prev = this->next - chrono::milliseconds(this->scale);
@@ -188,7 +188,7 @@ void GraphManager::UpdateSineSpine(int trackingPosition, int vertex_position)
 	this->sineSpline.update();
 
 	// rolling window to remove verticies of old.
-	cout << "vertex_position: " << vertex_position << endl;
+	//cout << "vertex_position: " << vertex_position << endl;
 
 	this->sineSpline.removeVertices(vertex_position, 1);
 	this->sineSpline.update();
@@ -207,7 +207,7 @@ void GraphManager::OpenWindow(string _type)
 		{
 			// set max GAS EMG value
 			this->gasEmgMax = emgGAS;
-			cout << "Set New Max" << endl;
+			//cout << "Set New Max" << endl;
 		}
 		if (emgTA > this->taEmgMax) 
 		{
@@ -249,7 +249,7 @@ void GraphManager::OpenWindow(string _type)
 			if ((this->spline.getVertexCount() + 1) == VIEW_WIDTH / this->scale) {
 				SlideGraph();
 				UpdateSplineMVC(emgGasScaled, vertex_position);
-				trackingPosition = sin(this->offset) * 25;
+				trackingPosition = sin(this->offset * 0.003) * 100;
 				UpdateSineSpine(trackingPosition, vertex_position);
 				vertex_position += this->scale;
 				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
@@ -259,11 +259,11 @@ void GraphManager::OpenWindow(string _type)
 			else {
 				UpdateSplineMVCStatic(emgGasScaled);
 				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
-				trackingPosition = sin(this->offset) * 25;
+				trackingPosition = sin(this->offset * 0.003) * 100;
 				UpdateSineSpineStatic(trackingPosition);
 
 			}
-			cout << "Sine Value: " << trackingPosition << endl;
+			//cout << "Sine Value: " << trackingPosition << endl;
 
 		}
 
