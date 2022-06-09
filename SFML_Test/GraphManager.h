@@ -21,8 +21,8 @@ class GraphManager
 public:
 	SocketManager TestSocket;
 	string TestTitle;
-	int TrialDuration, scale;
-	double sineAmp, sineFreq;
+	int TrialDuration, scale, graphScale;
+	double sineAmp, sineFreq, gasEmgMax, taEmgMax;
 	steady_clock::time_point next;
 	steady_clock::time_point prev;
 
@@ -33,6 +33,7 @@ public:
 	sf::VertexArray y_axis;
 	sf::VertexArray quad_x;
 	sf::VertexArray quad_y;
+	sf::VertexArray maxBar;
 	
 	sw::Spline spline{};
 	sw::Spline sineSpline{};
@@ -43,8 +44,13 @@ public:
 
 	// functions
 	GraphManager();
+	void SlideMaxEmg();
+	void UpdateMaxEMG();
 	void SlideGraph();
+	void UpdateSplineMVCStatic(double emgGasScaled);
 	void UpdateSplineMVC(int emgGasScaled, int vertex_position);
-	void UpdateSineSpine(int sineValue, int vertex_position);
+	void UpdateSineSpine(int sineValue, int vertex_position); 
+	void UpdateSineSpineStatic(int trackingPosition);
 	void OpenWindow(string _type);
+
 };

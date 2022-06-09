@@ -6,7 +6,10 @@ GraphManager::GraphManager(){
 	this->TrialDuration = TestSocket.GetDuration();
 	this->sineAmp = 2.5;
 	this->sineFreq = 0.2;
+	this->gasEmgMax = 0.01;
+	this->taEmgMax = 0.03;
 
+	this->graphScale = 2500;
 	this->scale = 10;
 	this->next = chrono::steady_clock::now();
 	this->prev = this->next - chrono::milliseconds(this->scale);
@@ -55,6 +58,21 @@ GraphManager::GraphManager(){
 	this->quad_y.append(sf::Vector2f(110.f, 100.f));
 	this->quad_y[3].color = sf::Color(192, 192, 192);
 
+	// maxBar: 
+	this->maxBar.setPrimitiveType(sf::Quads);
+	this->maxBar.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale)));
+	this->maxBar[0].color = sf::Color(0, 0, 255);
+	// Bottom Left
+	this->maxBar.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale)));
+	this->maxBar[1].color = sf::Color(0, 0, 255);
+	// Bottom Right
+	this->maxBar.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale)));
+	this->maxBar[2].color = sf::Color(0, 0, 255);
+	// Top Right
+	this->maxBar.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale)));
+	this->maxBar[3].color = sf::Color(0, 0, 255);
+
+
 	this->spline.setThickness(10);
 	this->spline.setColor(sf::Color(255, 30, 0));
 	// update always last after all modifications
@@ -96,6 +114,30 @@ void GraphManager::SlideGraph()
 
 
 }
+
+void GraphManager::SlideMaxEmg() 
+{
+	// Top Right
+	this->maxBar[0].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
+	// Bottom Right
+	this->maxBar[1].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
+	// Bottom Left
+	this->maxBar[2].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
+	// Top Left
+	this->maxBar[3].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
+}
+
+void GraphManager::UpdateMaxEMG() 
+{
+	this->maxBar[0].position = sf::Vector2f(100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
+	// Bottom Left
+	this->maxBar[1].position = sf::Vector2f(100.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
+	// Bottom Right
+	this->maxBar[2].position = sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
+	// Top Right
+	this->maxBar[3].position = sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
+}
+
 void GraphManager::UpdateSplineMVC(int emgGasScaled, int vertex_position)
 {
 	sf::Vector2f v1(215.f + this->offset, VIEW_HEIGHT - 100.f - emgGasScaled);
@@ -110,21 +152,48 @@ void GraphManager::UpdateSplineMVC(int emgGasScaled, int vertex_position)
 	this->spline.removeVertices(vertex_position, 1);
 	this->spline.update();
 }
-void GraphManager::UpdateSineSpine(int sineValue, int vertex_position)
+void GraphManager::UpdateSplineMVCStatic(double emgGasScaled) 
 {
-	// v1(width, height)
-	sf::Vector2f v1(215.f + this->offset, VIEW_HEIGHT - 100.f - sineValue);
+	sf::Vector2f v1(230.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
 	sw::Spline spline2{ 1, v1 };
 
 	spline2.setThickness(10);
+	// update always last after all modifications
+	this->spline.addSplineToBack(spline2);
+	this->spline.update();
+
+	this->offset += this->scale;
+}
+void GraphManager::UpdateSineSpineStatic(int trackingPosition)
+{
+	// v1(width, height)
+	sf::Vector2f v1(215.f + this->offset, (VIEW_HEIGHT / 2) - trackingPosition);
+	sw::Spline spline2{ 1, v1 };
+	spline2.setThickness(10);
+
+	// update always last after all modifications
+	this->sineSpline.addSplineToBack(spline2);
+	this->sineSpline.update();
+
+}
+void GraphManager::UpdateSineSpine(int trackingPosition, int vertex_position)
+{
+	// v1(width, height)
+	sf::Vector2f v1(215.f + this->offset, (VIEW_HEIGHT/2) - trackingPosition);
+	sw::Spline spline2{ 1, v1 };
+	spline2.setThickness(10);
+	
 	// update always last after all modifications
 	this->sineSpline.addSplineToBack(spline2);
 	this->sineSpline.update();
 
 	// rolling window to remove verticies of old.
+	cout << "vertex_position: " << vertex_position << endl;
+
 	this->sineSpline.removeVertices(vertex_position, 1);
 	this->sineSpline.update();
 }
+
 
 void GraphManager::OpenWindow(string _type)
 {
@@ -134,6 +203,17 @@ void GraphManager::OpenWindow(string _type)
 		double piTime = read_result[0];
 		double emgGAS = read_result[1];
 		double emgTA = read_result[2];
+		if (emgGAS > this->gasEmgMax) 
+		{
+			// set max GAS EMG value
+			this->gasEmgMax = emgGAS;
+			cout << "Set New Max" << endl;
+		}
+		if (emgTA > this->taEmgMax) 
+		{
+			// set max TA EMG value
+			this->taEmgMax = emgTA;
+		}
 		printf("piTime: %.15g - emgGAS: %.15g - emgTA: %.15g\n", piTime, emgGAS, emgTA);
 		// cout << "TrialDuration: " << this->TrialDuration << endl;
 		// new - taking old emg data and plotting it
@@ -153,19 +233,14 @@ void GraphManager::OpenWindow(string _type)
 		{
 			if ((this->spline.getVertexCount() + 1) == VIEW_WIDTH / this->scale) {
 				SlideGraph();
+				SlideMaxEmg();
 				UpdateSplineMVC(emgGasScaled, vertex_position);
 				vertex_position += this->scale;
 			}
 			else {
-				sf::Vector2f v1(230.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
-				sw::Spline spline2{ 1, v1 };
-
-				spline2.setThickness(10);
-				// update always last after all modifications
-				this->spline.addSplineToBack(spline2);
-				this->spline.update();
-
-				this->offset += this->scale;
+				UpdateMaxEMG();
+				// UpdateSplineMVCStatic
+				UpdateSplineMVCStatic(emgGasScaled);
 			}
 		}
 		else if (_type == "Dynamic")
@@ -174,21 +249,18 @@ void GraphManager::OpenWindow(string _type)
 			if ((this->spline.getVertexCount() + 1) == VIEW_WIDTH / this->scale) {
 				SlideGraph();
 				UpdateSplineMVC(emgGasScaled, vertex_position);
+				trackingPosition = sin(this->offset) * 25;
+				UpdateSineSpine(trackingPosition, vertex_position);
 				vertex_position += this->scale;
-				trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 2500;
+				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
+
 
 			}
 			else {
-				sf::Vector2f v1(230.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
-				sw::Spline spline2{ 1, v1 };
-
-				spline2.setThickness(10);
-				// update always last after all modifications
-				this->spline.addSplineToBack(spline2);
-				this->spline.update();
-
-				this->offset += this->scale;
-				trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 2500;
+				UpdateSplineMVCStatic(emgGasScaled);
+				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
+				trackingPosition = sin(this->offset) * 25;
+				UpdateSineSpineStatic(trackingPosition);
 
 			}
 			cout << "Sine Value: " << trackingPosition << endl;
@@ -196,10 +268,13 @@ void GraphManager::OpenWindow(string _type)
 		}
 
 			this->window.clear(sf::Color(255, 255, 255));
-			this->window.draw(quad_x);
-			this->window.draw(quad_y);
-			this->window.draw(spline);
-			this->window.draw(sineSpline);
+			this->window.draw(this->quad_x);
+			this->window.draw(this->quad_y);
+			this->window.draw(this->spline);
+			this->window.draw(this->sineSpline);
+			if (_type == "MVC") {
+				this->window.draw(this->maxBar);
+			}
 			this->window.setView(view);
 
 			//printf("Vertex Count: %d", spline.getVertexCount());
