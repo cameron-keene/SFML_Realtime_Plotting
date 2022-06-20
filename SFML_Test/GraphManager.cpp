@@ -11,6 +11,19 @@ GraphManager::GraphManager(){
 
 	this->graphScale = 25000;
 	this->scale = 10;
+
+	// for normalization
+	this->gas_normalization = 0.0261;
+	this->ta_normalization = 0.0464;
+	this->gas_threshold = 0.00252;
+	this->ta_threshold = 0.00204;
+
+	this->object_mass = 0.5;
+	this->object_position = 0;
+	this->object_velocity = 0;
+	this->object_damping = 0.5;
+	this->max_position = 10;
+
 	this->next = chrono::steady_clock::now();
 	this->prev = this->next - chrono::milliseconds(this->scale);
 
@@ -86,6 +99,9 @@ GraphManager::GraphManager(){
 	this->offset = 2;
 
 	this->view.setCenter(VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
+
+	this->t0 = steady_clock::now();
+	this->prev_t = this->t0;
 }
 
 void GraphManager::SlideGraph()
@@ -164,6 +180,32 @@ void GraphManager::UpdateSplineMVCStatic(double emgGasScaled)
 
 	this->offset += this->scale;
 }
+void GraphManager::UpdateSplineDynamic(int emgGasScaled, int vertex_position)
+{
+	sf::Vector2f v1(215.f + this->offset, VIEW_HEIGHT - 100.f - emgGasScaled);
+	sw::Spline spline2{ 1, v1 };
+
+	spline2.setThickness(10);
+	// update always last after all modifications
+	this->spline.addSplineToBack(spline2);
+	this->spline.update();
+
+	// rolling window to remove verticies of old.
+	this->spline.removeVertices(vertex_position, 1);
+	this->spline.update();
+}
+void GraphManager::UpdateSplineDynamicStatic(double emgGasScaled)
+{
+	sf::Vector2f v1(230.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
+	sw::Spline spline2{ 1, v1 };
+
+	spline2.setThickness(10);
+	// update always last after all modifications
+	this->spline.addSplineToBack(spline2);
+	this->spline.update();
+
+	this->offset += this->scale;
+}
 void GraphManager::UpdateSineSpineStatic(int trackingPosition)
 {
 	// v1(width, height)
@@ -199,7 +241,11 @@ void GraphManager::OpenWindow(string _type)
 {
 	while (this->window.isOpen()) 
 	{
+		this->t_now = steady_clock::now();
+		this->t_start = steady_clock::now();
 		this->read_result = this->TestSocket.Read();
+		this->t_end = steady_clock::now();
+
 		double piTime = read_result[0];
 		double emgGAS = read_result[1];
 		double emgTA = read_result[2];
@@ -219,6 +265,8 @@ void GraphManager::OpenWindow(string _type)
 		// new - taking old emg data and plotting it
 		// data is on scale 0.000199 to 0.0258
 		double emgGasScaled = emgGAS * 2500;
+
+
 
 		int vertex_position = 0;
 		double trackingPosition = 0.0;
@@ -245,19 +293,65 @@ void GraphManager::OpenWindow(string _type)
 		}
 		else if (_type == "Dynamic")
 		{
-			//Sine Wave y(t) = A * sin(2 * PI * f * t + shift)
+			// need to make new scaled value for dynamic tracking 
+			// step 1: Normalization
+			double gas_norm = emgGAS / this->gas_normalization * 100;
+			double ta_norm = emgTA / this->ta_normalization * 100;
+			// step 2: check for if below threshold
+			if (emgGAS < this->gas_threshold) 
+			// if below threshold then set to 0
+			{
+				gas_norm = 0;
+			}
+			if (emgTA < this->ta_threshold) 
+			{
+				ta_norm = 0;
+			}
+			// step 3: calc previous time
+			double calc_t = std::chrono::duration<double>(this->t_now - this->prev_t).count();
+			// step 4: get combined emg value
+			double emg_val = (ta_norm - gas_norm) / this->object_mass;
+			// step 5: calc C1
+			double C1 = this->object_velocity - emg_val;
+			// step 6: get C2 (inverse of C1)
+			double C2 = -C1;
+			// step 7: calculate object velocity
+			this->object_velocity = C1 * exp(-this->object_mass / this->object_damping * calc_t) + emg_val;
+			// step 8: calculate object position
+			this->object_position = this->object_position + C1 + C2 * exp(-this->object_mass / this->object_damping * calc_t) + calc_t * emg_val;
+			// step 9: check object position twice
+			/*if (this->object_position > this->max_position) 
+			{
+				this->object_position = this->max_position;
+				this->object_velocity = 0;
+			}
+			else if (this->object_position < -this->max_position) 
+			{
+				this->object_position = -this->max_position;
+				this->object_velocity = 0;
+			}*/
+			// step 10: check if dynamic line then convert tracking position. 
+			// we know that it is a dynamic line because we are inside of the dynamic if clause.
+			// tracking position only calculated to be returned in datalog, not used for plotting.
+			// we are plotting the object_position
+			double tracking_position = this->sineAmp * sin(2 * PI * this->sineFreq * std::chrono::duration<double>(this->t_now - this->t0).count());
+
+			cout << "tracking_position: " << tracking_position << endl;
+
+
+			// if plot fits on screen 
 			if ((this->spline.getVertexCount() + 1) == VIEW_WIDTH / this->scale) {
 				SlideGraph();
-				UpdateSplineMVC(emgGasScaled, vertex_position);
+				UpdateSplineDynamic(emgGasScaled, vertex_position);
 				trackingPosition = sin(this->offset * 0.003) * 100;
 				UpdateSineSpine(trackingPosition, vertex_position);
 				vertex_position += this->scale;
 				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
 
 
-			}
+			} // if the data plot d
 			else {
-				UpdateSplineMVCStatic(emgGasScaled);
+				UpdateSplineDynamicStatic(emgGasScaled);
 				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
 				trackingPosition = sin(this->offset * 0.003) * 100;
 				UpdateSineSpineStatic(trackingPosition);

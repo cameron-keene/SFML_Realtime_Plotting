@@ -22,9 +22,10 @@ public:
 	SocketManager TestSocket;
 	string TestTitle;
 	int TrialDuration, scale, graphScale;
-	double sineAmp, sineFreq, gasEmgMax, taEmgMax;
+	double sineAmp, sineFreq, gasEmgMax, taEmgMax, gas_normalization, ta_normalization, gas_threshold, ta_threshold, object_mass, object_velocity, object_position, object_damping, max_position;
 	steady_clock::time_point next;
 	steady_clock::time_point prev;
+	steady_clock::time_point t0, prev_t, t_now, t_start, t_end;
 
 	sf::RenderWindow window;
 	sf::View view;
@@ -47,6 +48,8 @@ public:
 	void SlideMaxEmg();
 	void UpdateMaxEMG();
 	void SlideGraph();
+	void UpdateSplineDynamicStatic(double emgGasScaled);
+	void UpdateSplineDynamic(int emgGasScaled, int vertex_position);
 	void UpdateSplineMVCStatic(double emgGasScaled);
 	void UpdateSplineMVC(int emgGasScaled, int vertex_position);
 	void UpdateSineSpine(int sineValue, int vertex_position); 
