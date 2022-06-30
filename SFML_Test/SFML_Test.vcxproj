@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GraphManager.cpp" />
     <ClCompile Include="SelbaWard\BitmapFont.cpp" />
     <ClCompile Include="SelbaWard\BitmapText.cpp" />
     <ClCompile Include="SelbaWard\ConsoleScreen.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="SFML_Test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GraphManager.h" />
     <ClInclude Include="SelbaWard.hpp" />
     <ClInclude Include="SelbaWard\BitmapFont.hpp" />
     <ClInclude Include="SelbaWard\BitmapText.hpp" />

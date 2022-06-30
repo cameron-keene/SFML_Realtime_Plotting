@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
+#include <iostream>
 // Link with ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
 using namespace std;
@@ -19,8 +20,8 @@ class SocketManager
 	
 	
 public:
-	// -------------------------------------- For Socket --------------------------------------
 	int title = 0;
+	int trial_duration = 0;
 	int iResult0 = 0;
 	int iResult1 = 0;
 	int iResult2 = 0;
@@ -32,11 +33,13 @@ public:
 	// by default use port 1243
 	unsigned short DATA_PORT = 1243;
 	unsigned short TITLE_PORT = 1245;
-
+	// Title Info
 	char RecvBuf[38];
 	int BufLen = 38;
-
-
+	// Duration Info
+	char DurBuf[38];
+	int DurBufLen = 38;
+	// Data Streams
 	char RecvDataBuf0[38];
 	int RecvBufLen0 = 38;
 	char RecvDataBuf1[38];
@@ -50,4 +53,5 @@ public:
 	SocketManager();
 	string GetTitle();
 	vector<double> Read();
+	int GetDuration();
 };
