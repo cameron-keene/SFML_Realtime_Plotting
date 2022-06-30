@@ -39,42 +39,42 @@ GraphManager::GraphManager() {
 	this->view = sf::View(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_WIDTH, VIEW_HEIGHT));
 
 	// for x & y axis (Graph)
-	this->x_axis.setPrimitiveType(sf::Lines);
-	this->x_axis.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f));
-	this->x_axis.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f));
+	/*this->x_axis.setPrimitiveType(sf::Lines);
+	this->x_axis.append(sf::Vector2f(50.f, VIEW_HEIGHT - 50.f));
+	this->x_axis.append(sf::Vector2f(VIEW_WIDTH - 50.f, VIEW_HEIGHT - 50.f));
 
 	this->y_axis.setPrimitiveType(sf::Lines);
-	this->y_axis.append(sf::Vector2f(100.f, 100.f));
-	this->y_axis.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f));
+	this->y_axis.append(sf::Vector2f(50.f, 50.f));
+	this->y_axis.append(sf::Vector2f(50.f, VIEW_HEIGHT - 50.f));*/
 
 	// x-axis:
 	this->quad_x.setPrimitiveType(sf::Quads);
 	// Top Left
-	this->quad_x.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f));
+	this->quad_x.append(sf::Vector2f(50.f, VIEW_HEIGHT - 50.f));
 	this->quad_x[0].color = sf::Color(192, 192, 192);
 	// Bottom Left
-	this->quad_x.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f + 10.f));
+	this->quad_x.append(sf::Vector2f(50.f, VIEW_HEIGHT - 50.f + 10.f));
 	this->quad_x[1].color = sf::Color(192, 192, 192);
 	// Bottom Right
-	this->quad_x.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f + 10.f));
+	this->quad_x.append(sf::Vector2f(VIEW_WIDTH - 50.f, VIEW_HEIGHT - 50.f + 10.f));
 	this->quad_x[2].color = sf::Color(192, 192, 192);
 	// Top Right
-	this->quad_x.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f));
+	this->quad_x.append(sf::Vector2f(VIEW_WIDTH - 50.f, VIEW_HEIGHT - 50.f));
 	this->quad_x[3].color = sf::Color(192, 192, 192);
 
 	// y-axis:
 	this->quad_y.setPrimitiveType(sf::Quads);
 	// Top Left
-	this->quad_y.append(sf::Vector2f(100.f, 100.f));
+	this->quad_y.append(sf::Vector2f(50.f, 50.f));
 	this->quad_y[0].color = sf::Color(192, 192, 192);
 	// Bottom Left 
-	this->quad_y.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f));
+	this->quad_y.append(sf::Vector2f(50.f, VIEW_HEIGHT - 50.f));
 	this->quad_y[1].color = sf::Color(192, 192, 192);
 	// Bottom Right 
-	this->quad_y.append(sf::Vector2f(110.f, VIEW_HEIGHT - 100.f));
+	this->quad_y.append(sf::Vector2f(50.f + 10.0f, VIEW_HEIGHT - 50.f));
 	this->quad_y[2].color = sf::Color(192, 192, 192);
 	// Top Right
-	this->quad_y.append(sf::Vector2f(110.f, 100.f));
+	this->quad_y.append(sf::Vector2f(50.f + 10.f, 50.f));
 	this->quad_y[3].color = sf::Color(192, 192, 192);
 
 	// maxBar: 
@@ -121,22 +121,22 @@ void GraphManager::SlideGraph()
 	this->view.setCenter(-(VIEW_HEIGHT / 2) - 300 + this->offset, VIEW_HEIGHT / 2);
 
 	// Top Right
-	this->quad_x[0].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f);
+	this->quad_x[0].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 50.f);
 	// Bottom Right
-	this->quad_x[1].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f + 10.f);
+	this->quad_x[1].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 50.f + 10.f);
 	// Bottom Left
-	this->quad_x[2].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f + 10.f);
+	this->quad_x[2].position = sf::Vector2f(-VIEW_WIDTH + 50.f + 120.0f + this->offset, VIEW_HEIGHT - 50.f + 10.f);
 	// Top Left
-	this->quad_x[3].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f);
+	this->quad_x[3].position = sf::Vector2f(-VIEW_WIDTH + 50.f + 120.0f + this->offset, VIEW_HEIGHT - 50.f);
 
 	// Top Left
-	this->quad_y[0].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, 100.f);
+	this->quad_y[0].position = sf::Vector2f(-VIEW_WIDTH + 50.f + 120.0f + this->offset, 50.f);
 	// Bottom Left 
-	this->quad_y[1].position = sf::Vector2f(-VIEW_WIDTH + 220.f + this->offset, VIEW_HEIGHT - 100.f);
+	this->quad_y[1].position = sf::Vector2f(-VIEW_WIDTH + 50.f + 120.0f + this->offset, VIEW_HEIGHT - 50.f);
 	// Bottom Right 
-	this->quad_y[2].position = sf::Vector2f(-VIEW_WIDTH + 230.f + this->offset, VIEW_HEIGHT - 100.f);
+	this->quad_y[2].position = sf::Vector2f(-VIEW_WIDTH + 50.f + 130.0f + this->offset, VIEW_HEIGHT - 50.f);
 	// Top Right
-	this->quad_y[3].position = sf::Vector2f(-VIEW_WIDTH + 230.f + this->offset, 100.f);
+	this->quad_y[3].position = sf::Vector2f(-VIEW_WIDTH + 50.f + 130.0f + this->offset, 50.f);
 
 
 }
@@ -423,7 +423,7 @@ void GraphManager::OpenWindow(string _type)
 			// cout << "emg_val: " << emg_val << endl;
 			// step 5: calc C1
 			double C1 = this->object_velocity - emg_val;
-			cout << "C1: " << C1 << endl;
+			// cout << "C1: " << C1 << endl;
 
 			// step 6: calc object velocity
 			this->object_velocity = C1 * exp(-this->object_mass / this->object_damping * calc_t) + (this->gravity * this->object_damping + ta_norm) / this->object_mass;
@@ -433,7 +433,7 @@ void GraphManager::OpenWindow(string _type)
 
 			// step 8: check limit
 			if (this->object_position < this->object_start_position) {
-				cout << "hitting position limit" << endl;
+				// cout << "hitting position limit" << endl;
 				this->object_position = this->object_start_position;
 				this->object_velocity = 0;
 			}
@@ -444,8 +444,8 @@ void GraphManager::OpenWindow(string _type)
 				this->object_velocity = 0;
 			}
 
-			cout << "this->object_velocity: " << this->object_velocity << endl;
-			cout << "this->object_position: " << this->object_position << endl;
+			// cout << "this->object_velocity: " << this->object_velocity << endl;
+			// cout << "this->object_position: " << this->object_position << endl;
 
 			// step 10: Sine Wave
 			double tracking_position = this->sineAmp * sin(2 * PI * this->sineFreq * std::chrono::duration<double>(this->t_now - this->t0).count());
