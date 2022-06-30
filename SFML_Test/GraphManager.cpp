@@ -5,7 +5,7 @@ GraphManager::GraphManager() {
 	this->TestTitle = TestSocket.GetTitle();
 	this->TrialDuration = TestSocket.GetDuration();
 	this->sineAmp = 2.5;
-	this->sineFreq = 0.2;
+	this->sineFreq = 0.5;
 	this->gasEmgMax = 0.01;
 	this->taEmgMax = 0.03;
 	this->objectMax = 0.000000001;
@@ -25,10 +25,11 @@ GraphManager::GraphManager() {
 	this->object_velocity = 0;
 	this->object_damping = 0.5;
 	this->gravity = -20;
+	this->object_start_position = -3;
 	this->max_position = 10;
 
 	this->next = chrono::steady_clock::now();
-	this->prev = this->next - chrono::milliseconds(this->scale);
+	this->prev_t = this->next - chrono::milliseconds(this->scale);
 
 	sf::ContextSettings contextSettings; 
 	contextSettings.antialiasingLevel = 16;
@@ -81,17 +82,17 @@ GraphManager::GraphManager() {
 	this->maxBar.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale)));
 	this->maxBar[0].color = sf::Color(0, 0, 255);
 	// Bottom Left
-	this->maxBar.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale)));
+	this->maxBar.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f + 8.f - (this->gasEmgMax * this->graphScale)));
 	this->maxBar[1].color = sf::Color(0, 0, 255);
 	// Bottom Right
-	this->maxBar.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale)));
+	this->maxBar.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f + 8.f - (this->gasEmgMax * this->graphScale)));
 	this->maxBar[2].color = sf::Color(0, 0, 255);
 	// Top Right
 	this->maxBar.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale)));
 	this->maxBar[3].color = sf::Color(0, 0, 255);
 
 
-	this->spline.setThickness(10);
+	this->spline.setThickness(8);
 	this->spline.setColor(sf::Color::Blue); 
 	//this->spline.setBezierInterpolation(); // enable Bezier spline
 	//this->spline.setInterpolationSteps(5u); // curvature resolution
@@ -99,7 +100,7 @@ GraphManager::GraphManager() {
 	// update always last after all modifications
 	this->spline.update();
 
-	this->sineSpline.setThickness(10);
+	this->sineSpline.setThickness(8);
 	this->sineSpline.setColor(sf::Color(255, 30, 0));
 	// update always last after all modifications
 	//this->sineSpline.setBezierInterpolation();
@@ -400,7 +401,7 @@ void GraphManager::OpenWindow(string _type)
 			// step 1: Normalization
 			double gas_norm = emgGAS / this->gas_normalization * 100;
 			double ta_norm = emgTA / this->ta_normalization * 100;
-			//cout << "gas_norm: " << gas_norm << " - ta_norm: " << ta_norm << endl;
+			// cout << "gas_norm: " << gas_norm << " - ta_norm: " << ta_norm << endl;
 			// step 2: check for if below threshold
 			if (emgGAS < this->gas_threshold)
 				// if below threshold then set to 0
@@ -414,23 +415,64 @@ void GraphManager::OpenWindow(string _type)
 
 
 			// step 3: calc previous time
-			double calc_t = std::chrono::duration<double>(this->t_now - this->prev).count() * 10000;
-			cout << "calc_t: " << calc_t << endl;
+			double calc_t = std::chrono::duration<double>(this->t_now - this->prev_t).count();
+			// cout << "calc_t: " << calc_t << endl;
 
 			// step 4: get combined emg value
 			double emg_val = (this->gravity * this->object_damping + ta_norm) / this->object_mass;
 			// cout << "emg_val: " << emg_val << endl;
 			// step 5: calc C1
 			double C1 = this->object_velocity - emg_val;
-			//cout << "C1: " << C1 << endl;
+			cout << "C1: " << C1 << endl;
 
 			// step 6: calc object velocity
 			this->object_velocity = C1 * exp(-this->object_mass / this->object_damping * calc_t) + (this->gravity * this->object_damping + ta_norm) / this->object_mass;
-			// cout << "this->object_velocity: " << this->object_velocity << endl;
 			
 			// step 7: calc object position
 			this->object_position = this->object_position + C1 + -C1 * exp(-this->object_mass / this->object_damping * calc_t) + calc_t * (this->gravity * this->object_damping + ta_norm) / this->object_mass;
 
+			// step 8: check limit
+			if (this->object_position < this->object_start_position) {
+				cout << "hitting position limit" << endl;
+				this->object_position = this->object_start_position;
+				this->object_velocity = 0;
+			}
+
+			// step 9: check max position
+			if (this->object_position > this->max_position) {
+				this->object_position = this->max_position;
+				this->object_velocity = 0;
+			}
+
+			cout << "this->object_velocity: " << this->object_velocity << endl;
+			cout << "this->object_position: " << this->object_position << endl;
+
+			// step 10: Sine Wave
+			double tracking_position = this->sineAmp * sin(2 * PI * this->sineFreq * std::chrono::duration<double>(this->t_now - this->t0).count());
+			tracking_position *= 100;
+
+			// step 11: plotting
+			// Dynamic Plotting
+			if ((this->spline.getVertexCount() + 1) == VIEW_WIDTH / this->scale) {
+				SlideGraph();
+				UpdateSplineDynamic(this->object_position * 44, vertex_position);
+				trackingPosition = sin(this->offset * 0.003) * 100;
+				UpdateSineSpine(tracking_position, vertex_position);
+				vertex_position += this->scale;
+				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
+
+
+			} // Stationary Plotting
+			else {
+				UpdateSplineDynamicStatic(this->object_position * 44);
+				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
+				trackingPosition = sin(this->offset * 0.003) * 100;
+				UpdateSineSpineStatic(tracking_position);
+
+			}
+
+			// step 12: update the time.
+			this->prev_t = t_now;
 		} 
 
 		this->window.clear(sf::Color(255, 255, 255));
