@@ -12,6 +12,6 @@ using namespace std;
 int main()
 {
 	GraphManager TestGraph;
-	TestGraph.OpenWindow("Dynamic");
+	TestGraph.OpenWindow("Tracking_Dynamic");
     return 0;
 }

@@ -22,7 +22,7 @@ class GraphManager
 public:
 	SocketManager TestSocket;
 	string TestTitle;
-	int TrialDuration, scale, graphScale;
+	int TrialDuration, scale, graphScale, gravity;
 	double sineAmp, sineFreq, gasEmgMax, taEmgMax, gas_normalization, ta_normalization, gas_threshold, ta_threshold, object_mass, object_velocity, object_position, object_damping, max_position, objectMax, objectMin;
 	steady_clock::time_point next;
 	steady_clock::time_point prev;

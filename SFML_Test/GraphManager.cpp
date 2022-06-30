@@ -24,6 +24,7 @@ GraphManager::GraphManager() {
 	this->object_position = 0;
 	this->object_velocity = 0;
 	this->object_damping = 0.5;
+	this->gravity = -20;
 	this->max_position = 10;
 
 	this->next = chrono::steady_clock::now();
@@ -320,24 +321,27 @@ void GraphManager::OpenWindow(string _type)
 
 
 			// step 3: calc previous time
-			double calc_t = std::chrono::duration<double>(this->t_now - this->prev).count() * 10000;
-			std::chrono::duration<double> test  = this->t_now - this->prev;
-			//cout << "test: " << test << endl;
+			double calc_t = std::chrono::duration<double>(this->t_now - this->prev_t).count();
 			cout << "calc_t: " << calc_t << endl;
 
 			// step 4: get combined emg value
 			double emg_val = (ta_norm - gas_norm) / this->object_mass;
 			//cout << "emg_val: " << emg_val << endl;
+			// 
 			// step 5: calc C1
 			double C1 = this->object_velocity - emg_val;
 			//cout << "C1: " << C1 << endl;
+			
 			// step 6: get C2 (inverse of C1)
 			double C2 = -C1;
+
 			// step 7: calculate object velocity
 			this->object_velocity = C1 * exp(-this->object_mass / this->object_damping * calc_t) + emg_val;
 			cout << "object_velocity: " << object_velocity << endl;
+
 			// step 8: calculate object position
 			this->object_position = this->object_position + C1 + C2 * exp(-this->object_mass / this->object_damping * calc_t) + calc_t * emg_val;
+
 			// step 9: check object position twice
 			if (this->object_position > this->max_position)
 			{
@@ -363,8 +367,13 @@ void GraphManager::OpenWindow(string _type)
 			tracking_position *= 100;
 			//cout << "tracking_position: " << tracking_position << endl;
 			
+			// step 11: delay(skip)
 
-			// if plot fits on screen 
+			// step 12: update the time.
+			this->prev_t = t_now;
+
+			// step 13: plot to screen, same as return 
+			// Dynamic Plotting
 			if ((this->spline.getVertexCount() + 1) == VIEW_WIDTH / this->scale) {
 				SlideGraph();
 				UpdateSplineDynamic(object_position * 44, vertex_position);
@@ -374,7 +383,7 @@ void GraphManager::OpenWindow(string _type)
 				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
 
 
-			} // if the data plot d
+			} // Stationary Plotting
 			else {
 				UpdateSplineDynamicStatic(object_position * 44);
 				//trackingPosition = this->sineAmp * sin(2 * PI * this->offset) * 25000;
@@ -385,6 +394,44 @@ void GraphManager::OpenWindow(string _type)
 			//cout << "Sine Value: " << trackingPosition << endl;
 
 		}
+		else if (_type == "Gravity_Dynamic") 
+		{
+			// need to make new scaled value for dynamic tracking 
+			// step 1: Normalization
+			double gas_norm = emgGAS / this->gas_normalization * 100;
+			double ta_norm = emgTA / this->ta_normalization * 100;
+			//cout << "gas_norm: " << gas_norm << " - ta_norm: " << ta_norm << endl;
+			// step 2: check for if below threshold
+			if (emgGAS < this->gas_threshold)
+				// if below threshold then set to 0
+			{
+				gas_norm = 0;
+			}
+			if (emgTA < this->ta_threshold)
+			{
+				ta_norm = 0;
+			}
+
+
+			// step 3: calc previous time
+			double calc_t = std::chrono::duration<double>(this->t_now - this->prev).count() * 10000;
+			cout << "calc_t: " << calc_t << endl;
+
+			// step 4: get combined emg value
+			double emg_val = (this->gravity * this->object_damping + ta_norm) / this->object_mass;
+			// cout << "emg_val: " << emg_val << endl;
+			// step 5: calc C1
+			double C1 = this->object_velocity - emg_val;
+			//cout << "C1: " << C1 << endl;
+
+			// step 6: calc object velocity
+			this->object_velocity = C1 * exp(-this->object_mass / this->object_damping * calc_t) + (this->gravity * this->object_damping + ta_norm) / this->object_mass;
+			// cout << "this->object_velocity: " << this->object_velocity << endl;
+			
+			// step 7: calc object position
+			this->object_position = this->object_position + C1 + -C1 * exp(-this->object_mass / this->object_damping * calc_t) + calc_t * (this->gravity * this->object_damping + ta_norm) / this->object_mass;
+
+		} 
 
 		this->window.clear(sf::Color(255, 255, 255));
 		this->window.draw(this->quad_x);
@@ -405,7 +452,7 @@ void GraphManager::OpenWindow(string _type)
 		// do stuff
 		steady_clock::time_point now = steady_clock::now();
 		// std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(now - prev).count() << std::endl;
-		this->prev = now;
+		//this->prev = now;
 
 		// delay until time to iterate again
 		this->next += std::chrono::milliseconds(this->scale);
