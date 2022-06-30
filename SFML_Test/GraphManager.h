@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include <math.h>
+#include <iomanip>
 
 #define PI 3.14159265
 //#include <string>
@@ -22,7 +23,7 @@ public:
 	SocketManager TestSocket;
 	string TestTitle;
 	int TrialDuration, scale, graphScale;
-	double sineAmp, sineFreq, gasEmgMax, taEmgMax, gas_normalization, ta_normalization, gas_threshold, ta_threshold, object_mass, object_velocity, object_position, object_damping, max_position;
+	double sineAmp, sineFreq, gasEmgMax, taEmgMax, gas_normalization, ta_normalization, gas_threshold, ta_threshold, object_mass, object_velocity, object_position, object_damping, max_position, objectMax, objectMin;
 	steady_clock::time_point next;
 	steady_clock::time_point prev;
 	steady_clock::time_point t0, prev_t, t_now, t_start, t_end;

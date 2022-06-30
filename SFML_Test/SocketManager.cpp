@@ -1,6 +1,6 @@
 #include "SocketManager.h"
 
-SocketManager::SocketManager() 
+SocketManager::SocketManager()
 {
 	// ------------------------------------------------------
 	// Initialize Winsock
@@ -62,11 +62,12 @@ string SocketManager::GetTitle() {
 }
 vector<double> SocketManager::Read() {
 	vector<double> result;
-	
+
 	// recieving PiTime
 	memset(this->RecvDataBuf0, 0, this->RecvBufLen0);
 	this->iResult0 = recvfrom(this->RecvSocket0, this->RecvDataBuf0, this->RecvBufLen0, 0, (SOCKADDR*)&this->SenderAddr, &this->SenderAddrSize);
 	double piTime = strtod(this->RecvDataBuf0, NULL);
+	//cout << "piTime: " << piTime << endl;
 	if (this->iResult0 == SOCKET_ERROR)
 	{
 		wprintf(L"Recvfrom0 failed with error %d\n", WSAGetLastError());
@@ -92,10 +93,13 @@ vector<double> SocketManager::Read() {
 		wprintf(L"Recvfrom2 failed with error %d\n", WSAGetLastError());
 	}
 	result.push_back(emgTA);
+
+	//printf("piTime: %.15g - emgGAS: %.15g - emgTA: %.15g\n", piTime, emgGAS, emgTA);
+
 	return result;
 }
 
-int SocketManager::GetDuration() 
+int SocketManager::GetDuration()
 {
 	memset(this->DurBuf, 0, this->DurBufLen);
 	this->trial_duration = recvfrom(this->RecvSocket0, this->DurBuf, this->DurBufLen, 0, (SOCKADDR*)&this->SenderAddr, &this->SenderAddrSize);
