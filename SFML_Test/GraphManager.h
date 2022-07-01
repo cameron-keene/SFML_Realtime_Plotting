@@ -29,15 +29,16 @@ public:
 
 	sf::RenderWindow window;
 	sf::View view;
-	
-	sf::VertexArray x_axis;
-	sf::VertexArray y_axis;
+
 	sf::VertexArray quad_x;
 	sf::VertexArray quad_y;
 	sf::VertexArray maxBar;
 	
 	sw::Spline spline{};
 	sw::Spline sineSpline{};
+
+	sf::Text text;
+	sf::Font font;
 
 	uint16_t offset;
 
@@ -48,12 +49,12 @@ public:
 	void SlideMaxEmg();
 	void UpdateMaxEMG();
 	void SlideGraph();
-	void UpdateSplineDynamicStatic(double emgGasScaled);
+	void UpdateSplineStatic(double emgGasScaled);
 	void UpdateSplineDynamic(int emgGasScaled, int vertex_position);
 	void UpdateSplineMVCStatic(double emgGasScaled);
 	void UpdateSplineMVC(int emgGasScaled, int vertex_position);
-	void UpdateSineSpine(int sineValue, int vertex_position); 
-	void UpdateSineSpineStatic(int trackingPosition);
+	void UpdateSineSpline(int sineValue, int vertex_position); 
+	void UpdateSineSplineStatic(int trackingPosition);
 	void OpenWindow(string _type);
 
 };
