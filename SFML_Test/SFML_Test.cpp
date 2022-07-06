@@ -12,6 +12,6 @@ using namespace std;
 int main()
 {
 	GraphManager TestGraph;
-	TestGraph.OpenWindow("Gravity_Dynamic");
+	TestGraph.OpenWindow("Dynamic");
     return 0;
 }

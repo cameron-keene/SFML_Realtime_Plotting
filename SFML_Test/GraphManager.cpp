@@ -11,7 +11,7 @@ GraphManager::GraphManager() {
 	this->objectMax = 0.000000001;
 	this->objectMin = 0.01;
 
-	this->graphScale = 25000;
+	this->graphScale = 2500;
 	this->scale = 12;
 
 	// for normalization
@@ -40,17 +40,17 @@ GraphManager::GraphManager() {
 
 	// x-axis:
 	this->quad_x.setPrimitiveType(sf::Quads);
-	// Top Left
+	// Bottom Left
 	this->quad_x.append(sf::Vector2f(50.f, VIEW_HEIGHT - 50.f));
 	this->quad_x[0].color = sf::Color(192, 192, 192);
-	// Bottom Left
+	// Top Left
 	this->quad_x.append(sf::Vector2f(50.f, VIEW_HEIGHT - 50.f + 10.f));
 	this->quad_x[1].color = sf::Color(192, 192, 192);
-	// Bottom Right
-	this->quad_x.append(sf::Vector2f(VIEW_WIDTH - 50.f, VIEW_HEIGHT - 50.f + 10.f));
-	this->quad_x[2].color = sf::Color(192, 192, 192);
 	// Top Right
-	this->quad_x.append(sf::Vector2f(VIEW_WIDTH - 50.f, VIEW_HEIGHT - 50.f));
+	this->quad_x.append(sf::Vector2f(VIEW_WIDTH - 25.f, VIEW_HEIGHT - 50.f + 10.f));
+	this->quad_x[2].color = sf::Color(192, 192, 192);
+	// Bottom Right
+	this->quad_x.append(sf::Vector2f(VIEW_WIDTH - 25.f, VIEW_HEIGHT - 50.f));
 	this->quad_x[3].color = sf::Color(192, 192, 192);
 
 	// y-axis:
@@ -71,16 +71,16 @@ GraphManager::GraphManager() {
 	// maxBar: 
 	this->maxBar.setPrimitiveType(sf::Quads);
 	this->maxBar.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale)));
-	this->maxBar[0].color = sf::Color(0, 0, 255);
+	this->maxBar[0].color = sf::Color(255, 0, 0);
 	// Bottom Left
 	this->maxBar.append(sf::Vector2f(100.f, VIEW_HEIGHT - 100.f + 8.f - (this->gasEmgMax * this->graphScale)));
-	this->maxBar[1].color = sf::Color(0, 0, 255);
+	this->maxBar[1].color = sf::Color(255, 0, 0);
 	// Bottom Right
 	this->maxBar.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f + 8.f - (this->gasEmgMax * this->graphScale)));
-	this->maxBar[2].color = sf::Color(0, 0, 255);
+	this->maxBar[2].color = sf::Color(255, 0, 0);
 	// Top Right
 	this->maxBar.append(sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale)));
-	this->maxBar[3].color = sf::Color(0, 0, 255);
+	this->maxBar[3].color = sf::Color(255, 0, 0);
 
 
 	this->spline.setThickness(8);
@@ -132,9 +132,9 @@ void GraphManager::SlideGraph()
 	this->view.setCenter(-(VIEW_HEIGHT / 2) - 300 + this->offset, VIEW_HEIGHT / 2);
 
 	// Top Right
-	this->quad_x[0].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 50.f);
+	this->quad_x[0].position = sf::Vector2f(this->offset + 75.f, VIEW_HEIGHT - 50.f);
 	// Bottom Right
-	this->quad_x[1].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 50.f + 10.f);
+	this->quad_x[1].position = sf::Vector2f(this->offset + 75.f, VIEW_HEIGHT - 50.f + 10.f);
 	// Bottom Left
 	this->quad_x[2].position = sf::Vector2f(-VIEW_WIDTH + 50.f + 120.0f + this->offset, VIEW_HEIGHT - 50.f + 10.f);
 	// Top Left
@@ -155,29 +155,29 @@ void GraphManager::SlideGraph()
 void GraphManager::SlideMaxEmg()
 {
 	// Top Right
-	this->maxBar[0].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
+	this->maxBar[0].position = sf::Vector2f(this->offset + 75.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
 	// Bottom Right
-	this->maxBar[1].position = sf::Vector2f(this->offset, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
+	this->maxBar[1].position = sf::Vector2f(this->offset + 75.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
 	// Bottom Left
-	this->maxBar[2].position = sf::Vector2f(-VIEW_WIDTH + 100.f + 120.f + this->offset, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
+	this->maxBar[2].position = sf::Vector2f(-VIEW_WIDTH + 60.f + 120.f + this->offset, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
 	// Top Left
-	this->maxBar[3].position = sf::Vector2f(-VIEW_WIDTH + 100.f + 120.f + this->offset, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
+	this->maxBar[3].position = sf::Vector2f(-VIEW_WIDTH + 60.f + 120.f + this->offset, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
 }
 
 void GraphManager::UpdateMaxEMG()
 {
-	this->maxBar[0].position = sf::Vector2f(100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
+	this->maxBar[0].position = sf::Vector2f(60.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
 	// Bottom Left
-	this->maxBar[1].position = sf::Vector2f(100.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
+	this->maxBar[1].position = sf::Vector2f(60.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
 	// Bottom Right
-	this->maxBar[2].position = sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
+	this->maxBar[2].position = sf::Vector2f(VIEW_WIDTH - 25.f, VIEW_HEIGHT - 100.f + 10.f - (this->gasEmgMax * this->graphScale));
 	// Top Right
-	this->maxBar[3].position = sf::Vector2f(VIEW_WIDTH - 100.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
+	this->maxBar[3].position = sf::Vector2f(VIEW_WIDTH - 25.f, VIEW_HEIGHT - 100.f - (this->gasEmgMax * this->graphScale));
 }
 
 void GraphManager::UpdateSplineMVC(int emgGasScaled, int vertex_position)
 {
-	sf::Vector2f v1(100.f + 115.f + this->offset, VIEW_HEIGHT - 100.f - emgGasScaled);
+	sf::Vector2f v1(60.0f + this->offset, VIEW_HEIGHT - 100.f - emgGasScaled);
 	sw::Spline spline2{ 1, v1 };
 
 	spline2.setThickness(10);
@@ -192,7 +192,7 @@ void GraphManager::UpdateSplineMVC(int emgGasScaled, int vertex_position)
 
 void GraphManager::UpdateSplineMVCStatic(double emgGasScaled)
 {
-	sf::Vector2f v1(100.f + 130.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
+	sf::Vector2f v1(60.f + offset, VIEW_HEIGHT - 100.f - emgGasScaled);
 	sw::Spline spline2{ 1, v1 };
 
 	spline2.setThickness(10);
@@ -205,7 +205,7 @@ void GraphManager::UpdateSplineMVCStatic(double emgGasScaled)
 
 void GraphManager::UpdateSplineDynamic(int emgGasScaled, int vertex_position)
 {
-	sf::Vector2f v1(50.f + 105.f + this->offset, VIEW_HEIGHT / 2 - emgGasScaled);
+	sf::Vector2f v1(60.f + this->offset, VIEW_HEIGHT / 2 - emgGasScaled);
 	sw::Spline spline2{ 1, v1 }; 
 
 	spline2.setThickness(10);
@@ -220,7 +220,7 @@ void GraphManager::UpdateSplineDynamic(int emgGasScaled, int vertex_position)
 }
 void GraphManager::UpdateSplineStatic(double emgGasScaled)
 {
-	sf::Vector2f v1(50.f + 105.f + this->offset, VIEW_HEIGHT / 2 - emgGasScaled);
+	sf::Vector2f v1(70.f + this->offset, VIEW_HEIGHT / 2 - emgGasScaled);
 	sw::Spline spline2{ 1, v1 };
 
 	spline2.setThickness(10);
@@ -233,7 +233,7 @@ void GraphManager::UpdateSplineStatic(double emgGasScaled)
 void GraphManager::UpdateSineSplineStatic(int trackingPosition)
 {
 	// v1(width, height)
-	sf::Vector2f v1(48.0f + this->offset, (VIEW_HEIGHT / 2) - trackingPosition); // + 115.f + this->offset
+	sf::Vector2f v1(58.0f + this->offset, (VIEW_HEIGHT / 2) - trackingPosition); // + 115.f + this->offset
 	sw::Spline spline2{ 1, v1 };
 	spline2.setThickness(10);
 
@@ -245,7 +245,7 @@ void GraphManager::UpdateSineSplineStatic(int trackingPosition)
 void GraphManager::UpdateSineSpline(int trackingPosition, int vertex_position)
 {
 	// v1(width, height)
-	sf::Vector2f v1(50.f + 105.f + this->offset, (VIEW_HEIGHT / 2) - trackingPosition); //+ 115.f 
+	sf::Vector2f v1(58.f + this->offset, (VIEW_HEIGHT / 2) - trackingPosition); //+ 115.f 
 	sw::Spline spline2{ 1, v1 };
 	spline2.setThickness(10);
 
@@ -290,7 +290,7 @@ void GraphManager::OpenWindow(string _type)
 		// cout << "TrialDuration: " << this->TrialDuration << endl;
 		// new - taking old emg data and plotting it
 		// data is on scale 0.000199 to 0.0258
-		double emgGasScaled = emgGAS * 2500;
+		double emgGasScaled = emgGAS * this->graphScale;
 
 
 
@@ -305,7 +305,7 @@ void GraphManager::OpenWindow(string _type)
 		}
 		if (_type == "MVC")
 		{
-			if ((this->spline.getVertexCount() + 1) == VIEW_WIDTH / this->scale) {
+			if ((this->spline.getVertexCount() + 1) >= ((VIEW_WIDTH - 100) / this->scale)) {
 				SlideGraph();
 				SlideMaxEmg();
 				UpdateSplineMVC(emgGasScaled, vertex_position);
@@ -390,7 +390,7 @@ void GraphManager::OpenWindow(string _type)
 
 			// step 13: plot to screen, same as return 
 			// Dynamic Plotting
-			if ((this->spline.getVertexCount() + 1) == VIEW_WIDTH / this->scale) {
+			if ((this->spline.getVertexCount() + 1) >= ((VIEW_WIDTH - 100)/ this->scale)) {
 				SlideGraph();
 				UpdateSplineDynamic(object_position * 44, vertex_position);
 				trackingPosition = sin(this->offset * 0.003) * 100;
@@ -467,10 +467,11 @@ void GraphManager::OpenWindow(string _type)
 			tracking_position *= 100;
 
 			// step 11: plotting
-			// Dynamic Plotting
-			if ((this->spline.getVertexCount() + 1) >= VIEW_WIDTH / this->scale) {
+			// Dynamic Plotting, sliding window
+			if ((this->spline.getVertexCount() + 1) >= ((VIEW_WIDTH - 100) / this->scale)) {
+				//cout << "Sliding" << endl;
 				//cout << "this->spline.getVertexCount() + 1: " << this->spline.getVertexCount() + 1 << endl;
-				//cout << "VIEW_WIDTH / this->scale: " << VIEW_WIDTH / this->scale << endl;
+				cout << "VIEW_WIDTH / this->scale: " << (VIEW_WIDTH - 100) / this->scale << endl;
 				SlideGraph();
 				UpdateSplineDynamic(this->object_position * 44, vertex_position);
 				trackingPosition = sin(this->offset * 0.003) * 100;
