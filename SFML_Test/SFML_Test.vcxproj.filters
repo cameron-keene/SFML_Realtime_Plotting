@@ -75,6 +75,9 @@
     <ClCompile Include="GraphManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UI\MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SelbaWard.hpp">
@@ -149,11 +152,17 @@
     <ClInclude Include="GraphManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UI\MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SelbaWard\TileMap.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SocketManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="font.ttf" />
   </ItemGroup>
 </Project>

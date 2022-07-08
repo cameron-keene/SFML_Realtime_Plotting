@@ -7,11 +7,16 @@
 #include "SocketManager.cpp"
 #include "GraphManager.h"
 
+#include "./UI/MainMenu.h";
+
 using namespace std;
 
 int main()
 {
-	GraphManager TestGraph;
-	TestGraph.OpenWindow("Dynamic");
+	// main menu test
+	MainMenu testingMenu;
+	testingMenu.OpenMenu();
+	//GraphManager TestGraph;
+	//TestGraph.OpenWindow("Dynamic");
     return 0;
 }

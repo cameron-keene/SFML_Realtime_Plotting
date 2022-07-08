@@ -100,26 +100,29 @@ GraphManager::GraphManager() {
 	this->offset = 2;
 
 	this->view.setCenter(VIEW_WIDTH / 2, VIEW_HEIGHT / 2);
+	
 
-	// testing writing text
-	//if (!this->font.LoadFromFile("arial.ttf", 50))
-	//{
-	//	// Error...
-	//}
-	//// select the font
-	//text.setFont(sf::Font); // font is a sf::Font
+	// Load text information
+	if (!this->font.loadFromFile("arial.ttf")) {
+		cout << "file can not be loaded" << endl;
+		return;
+	}
+	
+	this->text.setFont(font);
 
 	// set the string to display
-	text.setString("Hello world");
+	this->text.setString("-1");
 
 	// set the character size
-	text.setCharacterSize(24); // in pixels, not points!
+	this->text.setCharacterSize(24); // in pixels, not points!
 
 	// set the color
-	text.setFillColor(sf::Color::Red);
+	this->text.setFillColor(sf::Color::Black);
+	
+	// set the text size
+	this->text.setCharacterSize(25);
 
-	// set the text style
-	text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+	this->text.setPosition(VIEW_WIDTH / 2 - 50.0f, VIEW_HEIGHT - 40.f);
 
 	this->t0 = steady_clock::now();
 	this->prev_t = this->t0;
@@ -149,6 +152,8 @@ void GraphManager::SlideGraph()
 	// Top Right
 	this->quad_y[3].position = sf::Vector2f(-VIEW_WIDTH + 50.f + 130.0f + this->offset, 50.f);
 
+	// Move Text
+	//this->text.setPosition(500.f + this->offset, VIEW_HEIGHT - 40.f);
 
 }
 
@@ -338,7 +343,7 @@ void GraphManager::OpenWindow(string _type)
 
 			// step 3: calc previous time
 			double calc_t = std::chrono::duration<double>(this->t_now - this->prev_t).count();
-			cout << "calc_t: " << calc_t << endl;
+			//cout << "calc_t: " << calc_t << endl;
 
 			// step 4: get combined emg value
 			double emg_val = (ta_norm - gas_norm) / this->object_mass;
@@ -353,7 +358,7 @@ void GraphManager::OpenWindow(string _type)
 
 			// step 7: calculate object velocity
 			this->object_velocity = C1 * exp(-this->object_mass / this->object_damping * calc_t) + emg_val;
-			cout << "object_velocity: " << object_velocity << endl;
+			//cout << "object_velocity: " << object_velocity << endl;
 
 			// step 8: calculate object position
 			this->object_position = this->object_position + C1 + C2 * exp(-this->object_mass / this->object_damping * calc_t) + calc_t * emg_val;
@@ -372,7 +377,7 @@ void GraphManager::OpenWindow(string _type)
 			//object_position = object_position * (double)10;
 			cout << setprecision(15) << fixed;
 			//object_position *= 100;
-			cout << "object_position: " << object_position*50 << endl;
+			//cout << "object_position: " << object_position*50 << endl;
 
 			// step 10: check if dynamic line then convert tracking position. 
 			// we know that it is a dynamic line because we are inside of the dynamic if clause.
@@ -498,7 +503,7 @@ void GraphManager::OpenWindow(string _type)
 		this->window.draw(this->quad_y);
 		this->window.draw(this->spline);
 		this->window.draw(this->sineSpline);
-		this->window.draw(text);
+		this->window.draw(this->text);
 		if (_type == "MVC") {
 			this->window.draw(this->maxBar);
 		}
