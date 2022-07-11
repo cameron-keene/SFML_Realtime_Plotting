@@ -13,9 +13,11 @@ using namespace std;
 
 int main()
 {
+	string test = "NULL";
 	// main menu test
 	MainMenu testingMenu;
-	testingMenu.OpenMenu();
+	testingMenu.OpenMenu(test);
+	cout << "Result: " << test << endl;
 	//GraphManager TestGraph;
 	//TestGraph.OpenWindow("Dynamic");
     return 0;
