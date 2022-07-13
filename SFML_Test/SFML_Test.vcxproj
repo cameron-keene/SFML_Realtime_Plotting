@@ -169,6 +169,7 @@
     <ClCompile Include="SelbaWard\Sprite3d.cpp" />
     <ClCompile Include="SelbaWard\Starfield.cpp" />
     <ClCompile Include="SFML_Test.cpp" />
+    <ClCompile Include="TestManager\TestManager.cpp" />
     <ClCompile Include="UI\MainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -196,14 +197,12 @@
     <ClInclude Include="SelbaWard\Starfield.hpp" />
     <ClInclude Include="SelbaWard\TileMap.hpp" />
     <ClInclude Include="SocketManager.h" />
+    <ClInclude Include="TestManager\TestManager.h" />
     <ClInclude Include="UI\MainMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SelbaWard\TileMap.inl" />
     <None Include="SocketManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="font.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
