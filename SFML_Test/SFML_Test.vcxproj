@@ -117,7 +117,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);TGUI_STATIC;TGUI_STATIC;TGUI_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\Camer\Documents\APIs\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -134,8 +134,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);TGUI_STATIC;TGUI_STATIC;TGUI_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,6 +145,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -165,6 +169,8 @@
     <ClCompile Include="SelbaWard\Sprite3d.cpp" />
     <ClCompile Include="SelbaWard\Starfield.cpp" />
     <ClCompile Include="SFML_Test.cpp" />
+    <ClCompile Include="TestManager\TestManager.cpp" />
+    <ClCompile Include="UI\MainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphManager.h" />
@@ -191,6 +197,8 @@
     <ClInclude Include="SelbaWard\Starfield.hpp" />
     <ClInclude Include="SelbaWard\TileMap.hpp" />
     <ClInclude Include="SocketManager.h" />
+    <ClInclude Include="TestManager\TestManager.h" />
+    <ClInclude Include="UI\MainMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SelbaWard\TileMap.inl" />
