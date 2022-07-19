@@ -63,38 +63,52 @@ string SocketManager::GetTitle() {
 vector<double> SocketManager::Read() {
 	vector<double> result;
 
-	// recieving PiTime
+	// recieving combined data in one string
 	memset(this->RecvDataBuf0, 0, this->RecvBufLen0);
 	this->iResult0 = recvfrom(this->RecvSocket0, this->RecvDataBuf0, this->RecvBufLen0, 0, (SOCKADDR*)&this->SenderAddr, &this->SenderAddrSize);
 	double piTime = strtod(this->RecvDataBuf0, NULL);
-	//cout << "piTime: " << piTime << endl;
+	//cout << "Combined: " << this->RecvDataBuf0 << endl;
+	vector<double> temp = this->ExtractValues(this->RecvDataBuf0);
+	//std::cout.precision(20);
+	for (int i = 0; i < temp.size(); i++) 
+	{
+		//cout << temp.at(i) << endl;
+	}
 	if (this->iResult0 == SOCKET_ERROR)
 	{
 		wprintf(L"Recvfrom0 failed with error %d\n", WSAGetLastError());
 	}
-	result.push_back(piTime);
+	//result.push_back(piTime);
 
-	// recieving emgGAS
-	memset(this->RecvDataBuf1, 0, this->RecvBufLen1);
-	this->iResult1 = recvfrom(this->RecvSocket0, this->RecvDataBuf1, this->RecvBufLen1, 0, (SOCKADDR*)&this->SenderAddr, &this->SenderAddrSize);
-	double emgGAS = strtod(this->RecvDataBuf1, NULL);
-	if (this->iResult1 == SOCKET_ERROR)
+	return temp;
+}
+
+vector<double> SocketManager::ExtractValues(string input) {
+	vector<double> result;
+
+	input.erase(std::remove_if(input.begin(), input.end(), ::isspace), input.end());
+	//cout << "size: " << input.length() << endl;
+	string delimiter = "|";
+	size_t prev = 0;
+	size_t found = input.find(delimiter);
+	while (found != string::npos) 
 	{
-		wprintf(L"Recvfrom1 failed with error %d\n", WSAGetLastError());
+		//cout << "prev: " << prev  << " - found: " << found  << endl;
+		//cout << "Result " << input.substr(prev, found) << endl;
+		string tmp = input.substr(prev , (found - prev) - 1);
+		tmp.erase(std::remove(tmp.begin(), tmp.end(), '|'), tmp.end());
+		result.push_back(stod(tmp));
+		//std::cout.precision(20);
+		//cout << "Result " << stod(tmp) << endl;
+		//cout << "Result " << input.substr(21, 24) << endl;
+		//cout << "Result " << input.substr(25, 27) << endl;
+		prev = found;
+		found = input.find(delimiter, found + 1);
 	}
-	result.push_back(emgGAS);
+	string tmp = input.substr(prev + 1, (found - prev) - 1);
 
-	// recieving emgTA
-	memset(this->RecvDataBuf2, 0, this->RecvBufLen2);
-	this->iResult2 = recvfrom(this->RecvSocket0, this->RecvDataBuf2, this->RecvBufLen2, 0, (SOCKADDR*)&this->SenderAddr, &this->SenderAddrSize);
-	double emgTA = strtod(this->RecvDataBuf2, NULL);
-	if (this->iResult2 == SOCKET_ERROR)
-	{
-		wprintf(L"Recvfrom2 failed with error %d\n", WSAGetLastError());
-	}
-	result.push_back(emgTA);
-
-	//printf("piTime: %.15g - emgGAS: %.15g - emgTA: %.15g\n", piTime, emgGAS, emgTA);
+	//cout << "Result " << stod(tmp) << endl;
+	result.push_back(stod(tmp));
 
 	return result;
 }

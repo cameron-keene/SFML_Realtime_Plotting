@@ -25,14 +25,19 @@ int main()
 	//testingMenu.OpenMenu(userSelection);
 	//cout << "Result: " << userSelection << endl;
 
-	TestManager testingManager(userSelection);
+	/*TestManager testingManager(userSelection);
 	for (int i = 0; i < 10; i++) {
 		testingManager.RunTest();
 		sleep_for(seconds(20));
-	}
+	}*/
 
 
-	//GraphManager TestGraph;
-	//TestGraph.OpenWindow("Dynamic");
+	GraphManager TestGraph;
+	TestGraph.OpenWindow("Gravity_Dynamic");
+
+	/*SocketManager testSocket;
+	testSocket.GetTitle();
+	testSocket.GetDuration();
+	testSocket.Read();*/
     return 0;
 }
