@@ -40,8 +40,10 @@ public:
 	char DurBuf[38];
 	int DurBufLen = 38;
 	// Data Streams
-	char RecvDataBuf0[38];
-	int RecvBufLen0 = 38;
+	int RecvBufLen0 = 114;
+	char RecvDataBuf0[114];
+
+
 	char RecvDataBuf1[38];
 	int RecvBufLen1 = 38;
 	char RecvDataBuf2[38];
@@ -54,4 +56,5 @@ public:
 	string GetTitle();
 	vector<double> Read();
 	int GetDuration();
+	vector<double> ExtractValues(string input);
 };
