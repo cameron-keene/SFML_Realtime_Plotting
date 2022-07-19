@@ -20,7 +20,7 @@ using namespace std::chrono;
 class GraphManager
 {
 public:
-	SocketManager TestSocket;
+	SocketManagerTCP TestSocket;
 	string TestTitle;
 	int TrialDuration, scale, graphScale, gravity, object_start_position;
 	double sineAmp, sineFreq, gasEmgMax, taEmgMax, gas_normalization, ta_normalization, gas_threshold, ta_threshold, object_mass, object_velocity, object_position, object_damping, max_position, objectMax, objectMin;

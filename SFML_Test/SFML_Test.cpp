@@ -6,7 +6,7 @@
 #include "SelbaWard/Line.hpp"
 #include "SelbaWard/Spline.hpp"
 
-#include "SocketManager.cpp"
+//#include "SocketManager.cpp"
 #include "GraphManager.h"
 
 #include "./UI/MainMenu.h";
@@ -19,18 +19,24 @@ using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 int main()
 {
-	string userSelection = "intact";
+	//string userSelection = "intact";
 	// main menu userSelection
 	//MainMenu testingMenu;
 	//testingMenu.OpenMenu(userSelection);
 	//cout << "Result: " << userSelection << endl;
 
-	TestManager testingManager(userSelection);
+	/*TestManager testingManager(userSelection);
 	for (int i = 0; i < 10; i++) {
 		testingManager.RunTest();
 		sleep_for(seconds(20));
-	}
+	}*/
 
+	SocketManagerTCP testSocket;
+	//testSocket.Read();
+
+	cout << "Title: " << testSocket.GetTitle() << endl;
+	cout << "Duration: " << testSocket.GetDuration() << endl;
+	testSocket.Read();
 
 	//GraphManager TestGraph;
 	//TestGraph.OpenWindow("Dynamic");

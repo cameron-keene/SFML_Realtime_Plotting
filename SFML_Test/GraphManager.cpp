@@ -2,8 +2,8 @@
 
 GraphManager::GraphManager() {
 	// initilization of Graph
-	this->TestTitle = TestSocket.GetTitle();
-	this->TrialDuration = TestSocket.GetDuration();
+	//this->TestTitle = TestSocket.GetTitle();
+	//this->TrialDuration = TestSocket.GetDuration();
 	this->sineAmp = 2.5;
 	this->sineFreq = 0.5;
 	this->gasEmgMax = 0.01;
@@ -274,7 +274,7 @@ void GraphManager::OpenWindow(string _type)
 	{
 		this->t_now = steady_clock::now();
 		this->t_start = steady_clock::now();
-		this->read_result = this->TestSocket.Read();
+		this->read_result = this->TestSocket.ReadAll();
 		this->t_end = steady_clock::now();
 
 		double piTime = read_result[0];
