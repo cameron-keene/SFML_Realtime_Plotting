@@ -7,6 +7,7 @@
 #include <thread>
 #include <math.h>
 #include <iomanip>
+#include <csignal>
 
 #define PI 3.14159265
 //#include <string>
@@ -56,5 +57,6 @@ public:
 	void UpdateSineSpline(int sineValue, int vertex_position); 
 	void UpdateSineSplineStatic(int trackingPosition);
 	void OpenWindow(string _type);
+	//void GraphSignalHandler(int signal_num);
 
 };
