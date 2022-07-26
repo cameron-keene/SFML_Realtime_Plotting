@@ -1,6 +1,7 @@
 #include "GraphManager.h"
 
 GraphManager::GraphManager() {
+
 	// initilization of Graph
 	this->TestTitle = TestSocket.GetTitle();
 	this->TrialDuration = TestSocket.GetDuration();
@@ -266,9 +267,16 @@ void GraphManager::UpdateSineSpline(int trackingPosition, int vertex_position)
 	this->sineSpline.update();
 }
 
+void GraphSignalHandler(int signal_num) {
+	cout << "Interrupt Signal: " << signal_num << "\n";
+	//exit(signal_num);
+}
+
 
 void GraphManager::OpenWindow(string _type)
 {
+	signal(SIGABRT, GraphSignalHandler);
+
 	//this->window.setFramerateLimit(100);
 	while (this->window.isOpen())
 	{
@@ -277,9 +285,7 @@ void GraphManager::OpenWindow(string _type)
 		this->read_result = this->TestSocket.Read();
 		if ((duration_cast<duration<double>>(steady_clock::now() - this->t_start)).count() > 0.025) {
 			cout << "Delay!!! - need to interpolate" << endl;
-			//raise(SIGABRT);
-			 //try to set the current values to the previous values 
-			//this->read_result = 
+			raise(SIGABRT);
 		}
 		//this->t_end = steady_clock::now();
 
