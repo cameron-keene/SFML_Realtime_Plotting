@@ -275,7 +275,13 @@ void GraphManager::OpenWindow(string _type)
 		this->t_now = steady_clock::now();
 		this->t_start = steady_clock::now();
 		this->read_result = this->TestSocket.Read();
-		this->t_end = steady_clock::now();
+		if ((duration_cast<duration<double>>(steady_clock::now() - this->t_start)).count() > 0.025) {
+			cout << "Delay!!! - need to interpolate" << endl;
+			//raise(SIGABRT);
+			 //try to set the current values to the previous values 
+			//this->read_result = 
+		}
+		//this->t_end = steady_clock::now();
 
 		double piTime = read_result[0];
 		double emgGAS = read_result[1];
